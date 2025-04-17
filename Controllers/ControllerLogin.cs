@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace TuProyectoAPI.Controllers
 {
     [ApiController]
-    [Route("api/Login")]
+    [Route("Api/Login")]
     public class ControllerLogin : ControllerBase
     {
         private readonly DataLogin _dataLogin;
