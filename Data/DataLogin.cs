@@ -2,14 +2,13 @@ using API.Connection;
 using API.Model; 
 using MySql.Data.MySqlClient;
 using System.Data;
-
 namespace API.Data 
 {
     public class DataLogin
     {
         private readonly ConnectionBD bD = new ConnectionBD();
 
-         public async Task<User?> GetUserByEmailAsync(string email)
+         public async Task<ModelRegistro?> GetUserByEmailAsync(string email)
         {
             using (var sql = new MySqlConnection(bD.ConnectionMYSQL()))
             {
@@ -24,14 +23,13 @@ namespace API.Data
                     {
                         if (await reader.ReadAsync())
                         {
-                            var user = new User
+                            var user = new ModelRegistro
                             {
-                                user_id = reader.GetInt32("user_id"),
-                                full_name = reader.GetString("full_name"),
+                                id = reader.GetInt32("user_id"),
+                                name = reader.GetString("full_name"),
                                 email = reader.GetString("email"),
-                                Pass = reader.GetString("Pass"),
-                                user_type = reader.GetString("user_type"),
-                                created_at = reader.GetDateTime("created_at")
+                                pass = reader.GetString("Pass"),
+                                tipo = reader.GetString("user_type"),
                             };
                             return user;
                         }
@@ -55,15 +53,5 @@ namespace API.Data
                 }
             }
         }
-    }
-
-    public class User
-    {
-        public int user_id { get; set; }
-        public string full_name { get; set; } = string.Empty;
-        public string email { get; set; } = string.Empty;
-        public string Pass { get; set; } = string.Empty;
-        public string user_type { get; set; } = string.Empty;
-        public DateTime created_at { get; set; }
     }
 }

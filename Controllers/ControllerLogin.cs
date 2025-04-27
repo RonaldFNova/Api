@@ -30,25 +30,25 @@ namespace TuProyectoAPI.Controllers
                 var user = await _dataLogin.GetUserByEmailAsync(loginRequest.email);
                 if (user == null)
                 {
-                    return BadRequest(new { message = "Usuario o contraseña incorrectos (user no encontrado)" });
+                    return BadRequest(new { message = "Usuario incorrecto (user no encontrado)" });
                 }
 
-                bool isPasswordValid = _passwordHasher.VerifyPassword(loginRequest.pass, user.Pass);
+                bool isPasswordValid = _passwordHasher.VerifyPassword(loginRequest.pass, user.pass);
                 if (!isPasswordValid)
                 {
-                    return BadRequest(new { message = "Usuario o contraseña incorrectos (pass no válido)" });
+                    return BadRequest(new { message = "contraseña incorrectos (pass no válido)" });
                 }
 
-                var token = _jwtService.GenerateToken(user.user_id.ToString());
+                var token = _jwtService.GenerateToken(user.id.ToString());
 
-                await _dataLogin.InsertLoginAsync(user.user_id);
+                await _dataLogin.InsertLoginAsync(user.id);
 
                 return Ok(new
                 {
-                    token = token,
-                    user_id = user.user_id,
-                    full_name = user.full_name,
-                    user_type = user.user_type
+                    token,
+                    user_id = user.id,
+                    full_name = user.name,
+                    user_type = user.tipo
                    
                 });
             }

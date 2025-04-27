@@ -1,6 +1,7 @@
 using API.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Security;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,9 +32,17 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.AddScoped<CodigoVerificacionService>();
+
+builder.Services.AddScoped<EmailService>();
+
 builder.Services.AddControllers();
 
 var app = builder.Build();
+
+app.UseMiddleware<ErrorHandlerMiddleware>();
+
+app.UseHttpsRedirection();
 
 app.UseRouting();
 app.UseAuthentication();
