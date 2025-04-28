@@ -21,7 +21,7 @@ namespace API.Data
 
         public int userId;
         private DateTime _Fecha;
-
+        private string nombre;
         public string codigo;
 
         public DataRegistro(PasswordHasher passwordHasher, CodigoVerificacionService codigoVerificacionService,EmailService emailService)
@@ -125,8 +125,10 @@ namespace API.Data
                 }
             }
 
-            await _emailService.SendEmailAsync(parametros.email, "Código de Verificación", 
-                $"Tu código de verificación es: {codigoVerificacion}");
+            nombre = parametros.name;
+
+            await _emailService.SendEmailAsync(parametros.email,parametros.name,codigoVerificacion);
+            
 
             return _Fecha;
         }
@@ -163,8 +165,7 @@ namespace API.Data
                 }
             }
 
-            await _emailService.SendEmailAsync(parametros.email, "Nuevo Código de Verificación",
-            $"Tu nuevo código de verificación es: {nuevoCodigo}");
+            await _emailService.SendEmailAsync(parametros.email,nombre,nuevoCodigo);
 
             return _Fecha;
 
