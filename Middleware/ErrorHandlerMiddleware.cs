@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http;
 using System.Net;
 using System.Text.Json;
 using MySql.Data.MySqlClient; 
-
+using API.Error;
 public class ErrorHandlerMiddleware
 {
     private readonly RequestDelegate _next;
@@ -52,6 +52,31 @@ public class ErrorHandlerMiddleware
             case UnauthorizedAccessException:
                 statusCode = HttpStatusCode.Unauthorized;
                 mensajeError = "Acceso no autorizado.";
+                break;
+
+            case UsuarioNoEncontradoException:
+                statusCode = HttpStatusCode.NotFound;
+                mensajeError = exception.Message;
+                break;
+
+            case CodigoIncorrectoException:
+                statusCode = HttpStatusCode.BadRequest;
+                mensajeError = exception.Message;
+                break;
+
+            case EmailNoEncontradoException:
+                statusCode = HttpStatusCode.BadRequest;
+                mensajeError = exception.Message;
+                break;
+
+            case EstadoUsuarioVerificadoException:
+                statusCode = HttpStatusCode.BadRequest;
+                mensajeError = exception.Message;
+                break;
+
+            case EstadoEmailVerificadoException:
+                statusCode = HttpStatusCode.BadRequest;
+                mensajeError = exception.Message;
                 break;
 
             default:

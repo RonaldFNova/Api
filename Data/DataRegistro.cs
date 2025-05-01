@@ -3,6 +3,7 @@ using API.Model;
 using MySql.Data.MySqlClient;
 using System.Data;
 using API.Security;
+using API.Error;
 using Security;
 using Microsoft.VisualBasic;
 
@@ -22,6 +23,7 @@ namespace API.Data
         public int userId;
         private DateTime _Fecha;
         private string nombre;
+        private string email_prueba;
         public string codigo;
 
         public DataRegistro(PasswordHasher passwordHasher, CodigoVerificacionService codigoVerificacionService,EmailService emailService)
@@ -124,7 +126,7 @@ namespace API.Data
                     }
                 }
             }
-
+            
             nombre = parametros.name;
 
             await _emailService.SendEmailAsync(parametros.email,parametros.name,codigoVerificacion);
@@ -161,8 +163,31 @@ namespace API.Data
                         {
                             _Fecha = reader.GetDateTime("fecha_creacion");
                         }
+                        else
+                        {
+                            throw new EstadoUsuarioVerificadoException();
+                        }
                     }
                 }
+
+                using (var cmd = new MySqlCommand("sp_checkEmailExists", sql))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("p_email", parametros.email);
+                    cmd.Parameters.AddWithValue("p_user_id", parametros.id);
+
+
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        if (await reader.ReadAsync())
+                        {
+                            email_prueba = reader.GetString("email_exists");
+                        }
+            
+                    }
+                }
+
+                 if (email_prueba =="False") throw new EstadoEmailVerificadoException();
             }
 
             await _emailService.SendEmailAsync(parametros.email,nombre,nuevoCodigo);
@@ -192,7 +217,7 @@ namespace API.Data
             }
         }
 
-        public async Task ConfirmarVerificacion(ModelConfirmacion parametros)
+        public async Task  ConfirmarVerificacion(ModelConfirmacion parametros)
         {
 
             using (var sql = new MySqlConnection(bD.ConnectionMYSQL()))
@@ -209,6 +234,12 @@ namespace API.Data
                         {
                             codigo = reader.GetString("codigo_verificacion");
                         }
+
+                        else
+                        {
+                            throw new UsuarioNoEncontradoException();
+                        }
+
                     }
                 }
 
@@ -221,6 +252,11 @@ namespace API.Data
                         cmd.Parameters.AddWithValue("p_nuevo_estado", "Verificado");
                         await cmd.ExecuteNonQueryAsync();
                     }
+                }
+
+                else
+                {
+                    throw new CodigoIncorrectoException();
 
                 }
             }

@@ -45,7 +45,7 @@ namespace API.Controllers
 
             var token = _jwtService.GenerateToken(parametros.id.ToString());
 
-            return Ok(new {_dataRegistro.userId, token, fecha_creacion });
+            return Ok(new {mensaje = "Registro enviado correctamente",_dataRegistro.userId, token, fecha_creacion });
         }
 
         [HttpPut("{id}")]
@@ -78,9 +78,8 @@ namespace API.Controllers
         {
             DateTime fecha_creacion = await _dataRegistro.Reenviar(parametros);
 
-            return Ok(new {fecha_creacion});
+            return Ok(new {mensaje = "Código reenviado correctamente",fecha_creacion});
         }
-
     }
 
 
@@ -103,7 +102,8 @@ namespace API.Controllers
         {
             await _dataRegistro.ConfirmarVerificacion(parametros);
 
-            return NoContent();                
+              return Ok(new { mensaje = "Código confirmado correctamente" });
+
         }
     }
 }
