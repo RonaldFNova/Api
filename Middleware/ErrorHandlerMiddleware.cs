@@ -79,6 +79,16 @@ public class ErrorHandlerMiddleware
                 mensajeError = exception.Message;
                 break;
 
+            case TokenExpiradoException:
+                statusCode = HttpStatusCode.Unauthorized;
+                mensajeError = exception.Message;
+                break;          
+
+            case TokenInvalidoException:
+                statusCode = HttpStatusCode.Unauthorized;
+                mensajeError = exception.Message;
+                break;         
+
             default:
                 break;
         }

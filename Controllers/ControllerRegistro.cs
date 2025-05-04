@@ -3,8 +3,6 @@ using API.Model;
 using API.Security; 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Security;
-using MySql.Data.MySqlClient;
 
 namespace API.Controllers
 {

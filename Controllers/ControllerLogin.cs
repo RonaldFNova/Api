@@ -4,7 +4,7 @@ using API.Data;
 using API.Security;
 using Microsoft.AspNetCore.Authorization;
 
-namespace TuProyectoAPI.Controllers
+namespace API.Controllers
 {
     [ApiController]
     [Route("Api/Login")]

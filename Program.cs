@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Security;
 using System.Text;
+using API.Error;
 
 var builder = WebApplication.CreateBuilder(args);
+ 
 
 string secretKey = builder.Configuration["JwtSecretKey"]
                    ?? throw new Exception("No se ha configurado JwtSecretKey.");
@@ -30,13 +32,29 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience         = false,
         ClockSkew                = TimeSpan.Zero
     };
+
+
+    options.Events = new JwtBearerEvents
+    {
+        OnAuthenticationFailed = context =>
+        {
+            if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+            {
+                throw new TokenExpiradoException();
+            }
+            return Task.CompletedTask;
+        }
+    };
 });
 
 builder.Services.AddScoped<CodigoVerificacionService>();
 
 builder.Services.AddScoped<EmailService>();
+builder.Services.AddScoped<TokenHelper>();
 
 builder.Services.AddControllers();
+builder.Services.AddScoped<API.Data.DataTokenVerificar>();
+
 
 var app = builder.Build();
 
