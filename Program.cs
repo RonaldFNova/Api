@@ -1,20 +1,34 @@
 using API.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Security;
 using System.Text;
 using API.Error;
+using API.Data;
+using API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
  
 
-string secretKey = builder.Configuration["JwtSecretKey"]
-                   ?? throw new Exception("No se ha configurado JwtSecretKey.");
+string secretKey = builder.Configuration["JwtSecretKey"] ?? throw new Exception("No se ha configurado JwtSecretKey.");
 
 builder.Services.AddSingleton(new JwtService(secretKey));
+
+builder.Services.AddScoped<DataLogin>();
+
+builder.Services.AddScoped<DataRegistro>();
+
+builder.Services.AddScoped<DataTokenVerificar>();
+
+builder.Services.AddScoped<CodigoVerificacionService>();
+
+builder.Services.AddScoped<EmailService>();
+
+builder.Services.AddScoped<TokenHelper>();
+
 builder.Services.AddSingleton<PasswordHasher>();
-builder.Services.AddScoped<API.Data.DataLogin>();
-builder.Services.AddScoped<API.Data.DataRegistro>();
+
+builder.Services.AddControllers();
+
 
 builder.Services.AddAuthentication(options =>
 {
@@ -47,13 +61,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddScoped<CodigoVerificacionService>();
 
-builder.Services.AddScoped<EmailService>();
-builder.Services.AddScoped<TokenHelper>();
-
-builder.Services.AddControllers();
-builder.Services.AddScoped<API.Data.DataTokenVerificar>();
 
 
 var app = builder.Build();
@@ -63,10 +71,13 @@ app.UseMiddleware<ErrorHandlerMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseRouting();
+
 app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllers();
+
 app.MapGet("/", () => "Hello World!");
 
 app.Run();

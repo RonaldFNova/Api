@@ -3,7 +3,7 @@ using SendGrid.Helpers.Mail;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 
-namespace Security
+namespace API.Security
 {
     public class EmailService
     {
