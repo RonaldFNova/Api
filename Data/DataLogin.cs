@@ -8,7 +8,7 @@ namespace API.Data
     {
         private readonly ConnectionBD bD = new ConnectionBD();
 
-         public async Task<ModelRegistro?> GetUserByEmailAsync(string email)
+         public async Task<ModelLogin?> GetUserByEmailAsync(string email)
         {
             using (var sql = new MySqlConnection(bD.ConnectionMYSQL()))
             {
@@ -23,13 +23,12 @@ namespace API.Data
                     {
                         if (await reader.ReadAsync())
                         {
-                            var user = new ModelRegistro
+                            var user = new ModelLogin
                             {
                                 id = reader.GetInt32("user_id"),
-                                name = reader.GetString("full_name"),
                                 email = reader.GetString("email"),
                                 pass = reader.GetString("Pass"),
-                                tipo = reader.GetString("user_type"),
+                                tipo = reader.GetString("user_type")
                             };
                             return user;
                         }
@@ -39,14 +38,14 @@ namespace API.Data
             return null;
         }
 
-        public async Task InsertLoginAsync(int userId)
+        public async Task InsertLoginAsync(string email)
         {
             using (var sql = new MySqlConnection(bD.ConnectionMYSQL()))
             {
                 using (var cmd = new MySqlCommand("sp_insertLogin", sql))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("p_user_id", userId);
+                    cmd.Parameters.AddWithValue("p_email", email);
 
                     await sql.OpenAsync();
                     await cmd.ExecuteNonQueryAsync();

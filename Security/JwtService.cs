@@ -19,6 +19,7 @@ namespace API.Security
         public string GenerateToken(string userId)
 
         {
+
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_secretKey);
 
@@ -35,7 +36,8 @@ namespace API.Security
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
+            var tokenString = tokenHandler.WriteToken(token);
+            return tokenString;
         }
     }
 }

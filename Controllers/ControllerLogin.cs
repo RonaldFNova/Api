@@ -25,37 +25,24 @@ namespace API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] ModelLogin loginRequest)
         {
-            try
+            var user = await _dataLogin.GetUserByEmailAsync(loginRequest.email);
+            if (user == null)
             {
-                var user = await _dataLogin.GetUserByEmailAsync(loginRequest.email);
-                if (user == null)
-                {
-                    return BadRequest(new { message = "Usuario incorrecto (user no encontrado)" });
-                }
-
-                bool isPasswordValid = _passwordHasher.VerifyPassword(loginRequest.pass, user.pass);
-                if (!isPasswordValid)
-                {
-                    return BadRequest(new { message = "contraseña incorrectos (pass no válido)" });
-                }
-
-                var token = _jwtService.GenerateToken(user.id.ToString());
-
-                await _dataLogin.InsertLoginAsync(user.id);
-
-                return Ok(new
-                {
-                    token,
-                    user_id = user.id,
-                    full_name = user.name,
-                    user_type = user.tipo
-                   
-                });
+                return BadRequest(new { message = "Usuario incorrecto (user no encontrado)" });
             }
-            catch (Exception ex)
+
+            bool isPasswordValid = _passwordHasher.VerifyPassword(loginRequest.pass, user.pass);
+            if (!isPasswordValid)
             {
-                return StatusCode(500, new { message = ex.Message });
+                return BadRequest(new { message = "contraseña incorrectos (pass no válido)" });
             }
+
+            var token = _jwtService.GenerateToken(user.id.ToString());
+
+            await _dataLogin.InsertLoginAsync(user.email);
+
+            return Ok(new{mensaje = "Código reenviado correctamente",token,user_type = user.tipo});
+            
         }
     }
 }

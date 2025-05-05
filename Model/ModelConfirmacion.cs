@@ -3,8 +3,8 @@ namespace API.Model
 {
     public class ModelConfirmacion
     {
-        [Required(ErrorMessage = "El id del usuario es obligatorio.")]
-        public int id {get; set;}
+        [Required(ErrorMessage = "El token del usuario es obligatorio.")]
+        public string token {get; set;}
 
         [MinLength(6)]
         [MaxLength(10)]

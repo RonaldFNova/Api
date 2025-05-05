@@ -6,6 +6,7 @@ using API.Security;
 using API.Error;
 using Security;
 using Microsoft.VisualBasic;
+using Google.Protobuf;
 
 namespace API.Data 
 {
@@ -18,16 +19,20 @@ namespace API.Data
 
         private readonly PasswordHasher _passwordHasher;
 
+        private readonly TokenHelper _tokenHelper;
+
         private readonly EmailService _emailService;
 
         public int userId;
-        private DateTime _Fecha;
+        private string? _Email;
         private string nombre;
         private string email_prueba;
         public string codigo;
 
-        public DataRegistro(PasswordHasher passwordHasher, CodigoVerificacionService codigoVerificacionService,EmailService emailService)
+        public DataRegistro(PasswordHasher passwordHasher,CodigoVerificacionService codigoVerificacionService,
+        EmailService emailService,TokenHelper tokenHelper)
         {
+            _tokenHelper = tokenHelper;
             _passwordHasher = passwordHasher;
             _codigoVerificacionService = codigoVerificacionService;
             _emailService = emailService;
@@ -68,9 +73,8 @@ namespace API.Data
             return lista;
         }
 
-        public async Task<DateTime> InsertarUsuario(ModelRegistro parametros)
+        public async Task<int> InsertarUsuario(ModelRegistro parametros)
         {
-
             var codigoVerificacion = _codigoVerificacionService.GenerarCodigo();    
 
             var passHashed = _passwordHasher.HashPassword(parametros.pass);
@@ -110,36 +114,27 @@ namespace API.Data
                     cmd.Parameters.AddWithValue("p_codigo_verificacion", codigoVerificacion);
                     await cmd.ExecuteNonQueryAsync();
                 }
-
-                    
-                using (var cmd = new MySqlCommand("sp_obtener_fecha_creacion", sql))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("p_user_id", userId);
-
-                    using (var reader = await cmd.ExecuteReaderAsync())
-                    {
-                        if (await reader.ReadAsync())
-                        {
-                            _Fecha = reader.GetDateTime("fecha_creacion");
-                        }
-                    }
-                }
             }
             
             nombre = parametros.name;
-
             await _emailService.SendEmailAsync(parametros.email,parametros.name,codigoVerificacion);
-            
+            return userId;
 
-            return _Fecha;
         }
 
-        public async Task<DateTime> Reenviar(ModelReenviar parametros)
+        public async Task Reenviar(ModelReenviar parametros)
         {
-     
-            var nuevoCodigo = _codigoVerificacionService.GenerarCodigo();
+            string nuevoCodigo = _codigoVerificacionService.GenerarCodigo();
 
+            string? idString =_tokenHelper.ObtenerUserIdDesdeTokenValidado(parametros.token);
+            
+            if (string.IsNullOrWhiteSpace(idString))
+            {
+                throw new TokenInvalidoException();
+            }
+
+            int id = Convert.ToInt32(idString);
+            
             using (var sql = new MySqlConnection(bD.ConnectionMYSQL()))
             {       
                 await sql.OpenAsync();
@@ -147,53 +142,42 @@ namespace API.Data
                 using (var cmd = new MySqlCommand("sp_update_codigo_verificacion", sql))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("p_user_id", parametros.id);
+                    cmd.Parameters.AddWithValue("p_user_id", id);
                     cmd.Parameters.AddWithValue("p_codigo_verificacion", nuevoCodigo);
                     await cmd.ExecuteNonQueryAsync();
                 }
 
-                using (var cmd = new MySqlCommand("sp_obtener_fecha_creacion", sql))
+                using (var cmd = new MySqlCommand("sp_checkUserVerificationStatus", sql))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("p_user_id", parametros.id);
+                    cmd.Parameters.AddWithValue("p_user_id", id);
 
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         if (await reader.ReadAsync())
                         {
-                            _Fecha = reader.GetDateTime("fecha_creacion");
-                        }
-                        else
-                        {
-                            throw new EstadoUsuarioVerificadoException();
+                            email_prueba = reader.GetString("user_not_verified");
                         }
                     }
                 }
 
-                using (var cmd = new MySqlCommand("sp_checkEmailExists", sql))
+                using (var cmd = new MySqlCommand("sp_get_email_by_user_id", sql))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("p_email", parametros.email);
-                    cmd.Parameters.AddWithValue("p_user_id", parametros.id);
-
+                    cmd.Parameters.AddWithValue("p_user_id", id);
 
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         if (await reader.ReadAsync())
                         {
-                            email_prueba = reader.GetString("email_exists");
+                            _Email = reader.GetString("email");
                         }
-            
                     }
                 }
 
-                 if (email_prueba =="False") throw new EstadoEmailVerificadoException();
+                if (email_prueba =="False") throw new EstadoEmailVerificadoException();
             }
-
-            await _emailService.SendEmailAsync(parametros.email,nombre,nuevoCodigo);
-
-            return _Fecha;
-
+            await _emailService.SendEmailAsync(_Email,nombre,nuevoCodigo);
         }
 
         public async Task EditarUsuario(ModelRegistro parametros)
@@ -219,6 +203,14 @@ namespace API.Data
 
         public async Task  ConfirmarVerificacion(ModelConfirmacion parametros)
         {
+            string? idString =_tokenHelper.ObtenerUserIdDesdeTokenValidado(parametros.token);
+            
+            if (string.IsNullOrWhiteSpace(idString))
+            {
+                throw new TokenInvalidoException();
+            }
+
+            int id = Convert.ToInt32(idString);
 
             using (var sql = new MySqlConnection(bD.ConnectionMYSQL()))
             {
@@ -226,7 +218,7 @@ namespace API.Data
                 {
                     await sql.OpenAsync();
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("p_user_id", parametros.id);
+                    cmd.Parameters.AddWithValue("p_user_id", id);
                         
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
@@ -248,7 +240,7 @@ namespace API.Data
                     using (var cmd = new MySqlCommand("sp_actualizar_estado_verificacion", sql))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("p_user_id", parametros.id);
+                        cmd.Parameters.AddWithValue("p_user_id", id);
                         cmd.Parameters.AddWithValue("p_nuevo_estado", "Verificado");
                         await cmd.ExecuteNonQueryAsync();
                     }

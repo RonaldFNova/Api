@@ -12,8 +12,9 @@ public class DataTokenVerificar
         _tokenHelper = tokenHelper;
     }
 
-    public async Task GetTokenVerificarAsync(ModelTokenVerificar modelo)
+    public async Task GetTokenVerificar(ModelTokenVerificar modelo)
     {
+
         if (string.IsNullOrEmpty(modelo.token))
             throw new ArgumentException("Token vacío.");
 
@@ -21,6 +22,9 @@ public class DataTokenVerificar
 
         if (string.IsNullOrEmpty(userId))
             throw new UnauthorizedAccessException("Token inválido.");
+
+
+        Console.WriteLine(userId);
     }
 }
 

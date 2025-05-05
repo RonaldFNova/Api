@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http;
 using System.Net;
 using System.Text.Json;
 using MySql.Data.MySqlClient; 
@@ -80,15 +79,14 @@ public class ErrorHandlerMiddleware
                 break;
 
             case TokenExpiradoException:
-                statusCode = HttpStatusCode.Unauthorized;
+                statusCode = HttpStatusCode.BadRequest;
                 mensajeError = exception.Message;
-                break;          
+                break;
 
             case TokenInvalidoException:
-                statusCode = HttpStatusCode.Unauthorized;
+                statusCode = HttpStatusCode.BadRequest;
                 mensajeError = exception.Message;
-                break;         
-
+                break;
             default:
                 break;
         }

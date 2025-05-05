@@ -22,7 +22,7 @@ namespace API.Controllers
 
         public async Task<ActionResult> Post([FromBody] ModelTokenVerificar parametros)
         {
-            await _datatokenverificar.GetTokenVerificarAsync(parametros);
+            await _datatokenverificar.GetTokenVerificar(parametros);
 
             return Ok(new {mensaje = "El token esta correcto"});
         }
