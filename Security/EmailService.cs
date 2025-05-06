@@ -9,9 +9,13 @@ namespace API.Security
     private readonly string ApiKey;
     public EmailService()
     {
-      ApiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
 
-      if (string.IsNullOrEmpty(ApiKey)) throw new Exception("No se ha configurado SENDGRID_API_KEY.");
+      var ApiKeyPath = "/etc/secrets/Sendgrid_Api_Key";
+
+      if (!File.Exists(ApiKeyPath))
+          throw new Exception("No se ha configurado Sendgrid_Api_Key.");
+
+      ApiKey = File.ReadAllText(ApiKeyPath).Trim();
     }
 
     public async Task SendEmailAsync(string emailDestino, string nombreUsuario, string codigo_verificacion)
