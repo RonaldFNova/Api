@@ -6,10 +6,10 @@ namespace API.Connection
         public ConnectionBD()
         {
 
-            var ConexionPath = "/etc/secrets/Sendgrid_Api_Key";
+            var ConexionPath = "/etc/secrets/DefaultConnection";
 
             if (!File.Exists(ConexionPath))
-                throw new Exception("No se ha configurado Sendgrid_Api_Key.");
+                throw new Exception("No se ha configurado DefaultConnection.");
 
             Conexion = File.ReadAllText(ConexionPath).Trim();
     
