@@ -1,30 +1,29 @@
 using SendGrid;
 using SendGrid.Helpers.Mail;
-using Microsoft.Extensions.Configuration;
-using System.Threading.Tasks;
+
 
 namespace API.Security
 {
-    public class EmailService
+  public class EmailService
+  {
+    private readonly string ApiKey;
+    public EmailService()
     {
-        private readonly string ApiKey;
+      ApiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
 
-        public EmailService(IConfiguration configuration)
-        {
-            var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.Development.json").Build();
-            ApiKey = builder.GetSection("SendGrid:ApiKey").Value;
-        }
+      if (string.IsNullOrEmpty(ApiKey)) throw new Exception("No se ha configurado SENDGRID_API_KEY.");
+    }
 
-        public async Task SendEmailAsync(string emailDestino, string nombreUsuario, string codigo_verificacion)
-        {
-            var client = new SendGridClient(ApiKey);
-            var from = new EmailAddress("rdevia1@udi.edu.co", "MediConnet");
-            var subject = "Verifica tu dirección de correo electrónico";
-            var to = new EmailAddress(emailDestino);
+    public async Task SendEmailAsync(string emailDestino, string nombreUsuario, string codigo_verificacion)
+    {
+      var client = new SendGridClient(ApiKey);
+      var from = new EmailAddress("rdevia1@udi.edu.co", "MediConnet");
+      var subject = "Verifica tu dirección de correo electrónico";
+      var to = new EmailAddress(emailDestino);
 
-            var plainTextContent = $"Hola {nombreUsuario}, tu código de verificación es: {codigo_verificacion}";
+      var plainTextContent = $"Hola {nombreUsuario}, tu código de verificación es: {codigo_verificacion}";
 
-            var htmlContent = $@"
+      var htmlContent = $@"
         <!DOCTYPE html>
         <html lang='es'>
         <head>
@@ -125,8 +124,8 @@ namespace API.Security
         </body>
         </html>";
 
-        var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
-        var response = await client.SendEmailAsync(msg);
-        }
+      var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+      var response = await client.SendEmailAsync(msg);
     }
+  }
 }

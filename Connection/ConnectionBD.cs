@@ -2,18 +2,16 @@ namespace API.Connection
 {
     public class ConnectionBD
     {
-        private string conexionString = string.Empty;
+        private readonly string Conexion;
         public ConnectionBD()
         {
-            var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
-            conexionString = builder.GetSection("ConnectionStrings:CONEXIONPRUEBA").Value;
-        }
+            Conexion = Environment.GetEnvironmentVariable("DefaultConnection");
 
+            if (string.IsNullOrEmpty(Conexion)) throw new Exception("No se ha configurado DefaultConnection.");
+        }
         public String ConnectionMYSQL()
         {
-            return conexionString;
+            return Conexion;
         }
-
     }
-
 }

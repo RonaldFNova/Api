@@ -8,8 +8,13 @@ using API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
  
+DotNetEnv.Env.Load("/etc/secrets/.env");
+//DotNetEnv.Env.Load();
 
-string secretKey = builder.Configuration["JwtSecretKey"] ?? throw new Exception("No se ha configurado JwtSecretKey.");
+string secretKey = Environment.GetEnvironmentVariable("JwtSecretKey");
+
+if (string.IsNullOrEmpty(secretKey))
+    throw new Exception("No se ha configurado JwtSecretKey.");
 
 builder.Services.AddSingleton(new JwtService(secretKey));
 

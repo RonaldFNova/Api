@@ -64,3 +64,5 @@ C:\Users\ronal\OneDrive\Escritorio\Api\obj\Debug\net9.0\Api.sourcelink.json
 C:\Users\ronal\OneDrive\Escritorio\Api\bin\Debug\net9.0\Newtonsoft.Json.dll
 C:\Users\ronal\OneDrive\Escritorio\Api\bin\Debug\net9.0\SendGrid.dll
 C:\Users\ronal\OneDrive\Escritorio\Api\bin\Debug\net9.0\StarkbankEcdsa.dll
+C:\Users\ronal\OneDrive\Escritorio\Api\bin\Debug\net9.0\DotNetEnv.dll
+C:\Users\ronal\OneDrive\Escritorio\Api\bin\Debug\net9.0\Sprache.dll
