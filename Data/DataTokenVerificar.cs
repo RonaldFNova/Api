@@ -23,7 +23,6 @@ public class DataTokenVerificar
         if (string.IsNullOrEmpty(userId))
             throw new UnauthorizedAccessException("Token inválido.");
 
-
         Console.WriteLine(userId);
     }
 }
