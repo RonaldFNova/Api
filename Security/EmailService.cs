@@ -1,26 +1,32 @@
 using SendGrid;
 using SendGrid.Helpers.Mail;
+using DotNetEnv;
 
 
 namespace API.Security
 {
   public class EmailService
   {
-    private readonly string ApiKey;
+    private readonly string _apiKey;
     public EmailService()
     {
+      string apiKeyPath = "/etc/secrets/Sendgrid_Api_Key";
 
-      var ApiKeyPath = "/etc/secrets/Sendgrid_Api_Key";
+      if (File.Exists(apiKeyPath)) _apiKey = File.ReadAllText(apiKeyPath).Trim();
+      
+      else
+      {        
+        Env.Load();
+        _apiKey = Environment.GetEnvironmentVariable("Sendgrid_Api_Key") ?? string.Empty;
+      }
 
-      if (!File.Exists(ApiKeyPath))
-          throw new Exception("No se ha configurado Sendgrid_Api_Key.");
+      if (string.IsNullOrWhiteSpace(_apiKey)) throw new Exception("No se ha configurado Sendgrid_Api_Key.");
 
-      ApiKey = File.ReadAllText(ApiKeyPath).Trim();
     }
 
     public async Task SendEmailAsync(string emailDestino, string nombreUsuario, string codigo_verificacion)
     {
-      var client = new SendGridClient(ApiKey);
+      var client = new SendGridClient(_apiKey);
       var from = new EmailAddress("rdevia1@udi.edu.co", "MediConnet");
       var subject = "Verifica tu dirección de correo electrónico";
       var to = new EmailAddress(emailDestino);

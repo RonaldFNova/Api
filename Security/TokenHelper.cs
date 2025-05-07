@@ -2,6 +2,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using API.Error;
+using DotNetEnv;
 
 namespace API.Security
 {   
@@ -9,9 +10,21 @@ namespace API.Security
     {
         private readonly string _secretKey;
 
-        public TokenHelper(IConfiguration configuration)
+        public TokenHelper()
         {
-            _secretKey = configuration["JwtSecretKey"];
+
+            string secretKeyPath = "/etc/secrets/JwtSecretKey";
+
+            if (File.Exists(secretKeyPath)) _secretKey = File.ReadAllText(secretKeyPath).Trim();
+            
+            else
+            {        
+                Env.Load();
+                _secretKey = Environment.GetEnvironmentVariable("JwtSecretKey") ?? string.Empty;
+            }
+
+            if (string.IsNullOrWhiteSpace(_secretKey)) throw new Exception("No se ha configurado JwtSecretKey.");
+
         }
 
         public string? ObtenerUserIdDesdeTokenValidado(string token)

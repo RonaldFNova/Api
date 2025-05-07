@@ -5,25 +5,26 @@ using System.Text;
 using API.Error;
 using API.Data;
 using API.Middleware;
+using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
  
 
-var secretKeyPath = "/etc/secrets/JwtSecretKey";
-if (!File.Exists(secretKeyPath))
-    throw new Exception("No se ha configurado JwtSecretKey.");
+string secretKeyPath = "/etc/secrets/JwtSecretKey";
+string _secretKey;
 
-string secretKey = File.ReadAllText(secretKeyPath).Trim();
+if (File.Exists(secretKeyPath)) _secretKey = File.ReadAllText(secretKeyPath).Trim();
 
-//DotNetEnv.Env.Load();
+else
+{        
+    Env.Load();
+    _secretKey = Environment.GetEnvironmentVariable("JwtSecretKey") ?? string.Empty;
+}
 
-/*string secretKey = Environment.GetEnvironmentVariable("JwtSecretKey");
+if (string.IsNullOrWhiteSpace(_secretKey)) throw new Exception("No se ha configurado JwtSecretKey.");
 
-if (string.IsNullOrEmpty(secretKey))
-    throw new Exception("No se ha configurado JwtSecretKey.");
-*/
 
-builder.Services.AddSingleton(new JwtService(secretKey));
+builder.Services.AddSingleton(new JwtService(_secretKey));
 
 builder.Services.AddScoped<DataLogin>();
 
@@ -49,7 +50,7 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
-    var key = Encoding.ASCII.GetBytes(secretKey);
+    var key = Encoding.ASCII.GetBytes(_secretKey);
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
@@ -72,8 +73,6 @@ builder.Services.AddAuthentication(options =>
         }
     };
 });
-
-
 
 
 var app = builder.Build();
