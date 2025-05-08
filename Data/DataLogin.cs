@@ -6,11 +6,16 @@ namespace API.Data
 {
     public class DataLogin
     {
-        private readonly ConnectionBD bD = new ConnectionBD();
+        private readonly ConnectionBD _baseDatos;
+
+        public DataLogin(ConnectionBD baseDatos)
+        {
+            _baseDatos = baseDatos;
+        }
 
          public async Task<ModelLogin?> GetUserByEmailAsync(string email)
         {
-            using (var sql = new MySqlConnection(bD.ConnectionMYSQL()))
+            using (var sql = new MySqlConnection(_baseDatos.ConnectionMYSQL()))
             {
                 using (var cmd = new MySqlCommand("sp_getUserByEmail", sql))
                 {
@@ -40,7 +45,7 @@ namespace API.Data
 
         public async Task InsertLoginAsync(string email)
         {
-            using (var sql = new MySqlConnection(bD.ConnectionMYSQL()))
+            using (var sql = new MySqlConnection(_baseDatos.ConnectionMYSQL()))
             {
                 using (var cmd = new MySqlCommand("sp_insertLogin", sql))
                 {

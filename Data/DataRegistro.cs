@@ -10,7 +10,7 @@ namespace API.Data
     public class DataRegistro 
     {
 
-        private readonly ConnectionBD bD = new ConnectionBD();
+        private readonly ConnectionBD _baseDatos;
 
         private readonly CodigoVerificacionService _codigoVerificacionService;
 
@@ -27,12 +27,13 @@ namespace API.Data
         public string codigo;
 
         public DataRegistro(PasswordHasher passwordHasher,CodigoVerificacionService codigoVerificacionService,
-        EmailService emailService,TokenHelper tokenHelper)
+        EmailService emailService,TokenHelper tokenHelper, ConnectionBD baseDatos)
         {
             _tokenHelper = tokenHelper;
             _passwordHasher = passwordHasher;
             _codigoVerificacionService = codigoVerificacionService;
             _emailService = emailService;
+            _baseDatos = baseDatos;
 
         }
 
@@ -41,7 +42,7 @@ namespace API.Data
 
             var lista = new List<ModelRegistro>();
 
-            using (var sql = new MySqlConnection(bD.ConnectionMYSQL()))
+            using (var sql = new MySqlConnection(_baseDatos.ConnectionMYSQL()))
             {
                 using (var cmd = new MySqlCommand("sp_get_user", sql))
                 {
@@ -76,7 +77,7 @@ namespace API.Data
 
             var passHashed = _passwordHasher.HashPassword(parametros.pass);
 
-            using (var sql = new MySqlConnection(bD.ConnectionMYSQL()))
+            using (var sql = new MySqlConnection(_baseDatos.ConnectionMYSQL()))
             {
                 await sql.OpenAsync();
 
@@ -132,7 +133,7 @@ namespace API.Data
 
             int id = Convert.ToInt32(idString);
             
-            using (var sql = new MySqlConnection(bD.ConnectionMYSQL()))
+            using (var sql = new MySqlConnection(_baseDatos.ConnectionMYSQL()))
             {       
                 await sql.OpenAsync();
 
@@ -182,7 +183,7 @@ namespace API.Data
   
             var passHashed = _passwordHasher.HashPassword(parametros.pass);
 
-            using (var sql = new MySqlConnection(bD.ConnectionMYSQL()))
+            using (var sql = new MySqlConnection(_baseDatos.ConnectionMYSQL()))
             {
                 using (var cmd = new MySqlCommand("sp_update_user", sql))
                 {
@@ -209,7 +210,7 @@ namespace API.Data
 
             int id = Convert.ToInt32(idString);
 
-            using (var sql = new MySqlConnection(bD.ConnectionMYSQL()))
+            using (var sql = new MySqlConnection(_baseDatos.ConnectionMYSQL()))
             {
                 using (var cmd = new MySqlCommand("sp_obtener_codigo_verificacion", sql))
                 {

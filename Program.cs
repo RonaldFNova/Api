@@ -5,6 +5,7 @@ using System.Text;
 using API.Error;
 using API.Data;
 using API.Middleware;
+using API.Connection;
 using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,6 +40,8 @@ builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<TokenHelper>();
 
 builder.Services.AddSingleton<PasswordHasher>();
+
+builder.Services.AddSingleton<ConnectionBD>();
 
 builder.Services.AddControllers();
 
