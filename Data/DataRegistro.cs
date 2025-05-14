@@ -4,6 +4,7 @@ using MySql.Data.MySqlClient;
 using System.Data;
 using API.Security;
 using API.Error;
+using Org.BouncyCastle.Asn1;
 
 namespace API.Data 
 {
@@ -21,11 +22,8 @@ namespace API.Data
         private readonly EmailService _emailService;
 
         public int userId;
-        private string? _Email;
-        private string nombre;
-        private string email_prueba;
-        public string codigo;
-
+    
+      
         public DataRegistro(PasswordHasher passwordHasher,CodigoVerificacionService codigoVerificacionService,
         EmailService emailService,TokenHelper tokenHelper, ConnectionBD baseDatos)
         {
@@ -109,12 +107,18 @@ namespace API.Data
             return userId;
         }
 
-        public async Task Reenviar(ModelReenviar parametros)
+        public async Task EnviarCodigo(ModelEnviarCodigo parametros)
         {
-            string nuevoCodigo = _codigoVerificacionService.GenerarCodigo();
+            string email = string.Empty;
+            
+            string emailConfirmacionVerificacion = string.Empty;
+
+            string nombreCompleto = string.Empty;
+
+            string codigo = _codigoVerificacionService.GenerarCodigo();
 
             string? idString =_tokenHelper.ObtenerUserIdDesdeTokenValidado(parametros.token);
-            
+
             if (string.IsNullOrWhiteSpace(idString))
             {
                 throw new TokenInvalidoException();
@@ -126,14 +130,6 @@ namespace API.Data
             {       
                 await sql.OpenAsync();
 
-                using (var cmd = new MySqlCommand("sp_update_codigo_verificacion", sql))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("p_user_id", id);
-                    cmd.Parameters.AddWithValue("p_codigo_verificacion", nuevoCodigo);
-                    await cmd.ExecuteNonQueryAsync();
-                }
-
                 using (var cmd = new MySqlCommand("sp_checkUserVerificationStatus", sql))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -143,7 +139,7 @@ namespace API.Data
                     {
                         if (await reader.ReadAsync())
                         {
-                            email_prueba = reader.GetString("user_not_verified");
+                            emailConfirmacionVerificacion = reader.GetString("user_not_verified");
                         }
                     }
                 }
@@ -157,14 +153,28 @@ namespace API.Data
                     {
                         if (await reader.ReadAsync())
                         {
-                            _Email = reader.GetString("email");
+                            email = reader.GetString("email");
                         }
                     }
                 }
 
-                if (email_prueba =="False") throw new EstadoEmailVerificadoException();
+                using (var cmd = new MySqlCommand("sp_get_full_name_by_user_id", sql))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("p_user_id", id);
+
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        if (await reader.ReadAsync())
+                        {
+                            nombreCompleto = reader.GetString("full_name");
+                        }
+                    }
+                }
+
+                if (emailConfirmacionVerificacion =="False") throw new EstadoEmailVerificadoException();
             }
-            await _emailService.SendEmailAsync(_Email,nombre,nuevoCodigo);
+            await _emailService.SendEmailAsync(email,nombreCompleto,codigo);
         }
 
         public async Task EditarUsuario(ModelRegistro parametros)
@@ -191,6 +201,8 @@ namespace API.Data
         public async Task  ConfirmarVerificacion(ModelConfirmacion parametros)
         {
             string? idString =_tokenHelper.ObtenerUserIdDesdeTokenValidado(parametros.token);
+
+            int codigo = 0;
             
             if (string.IsNullOrWhiteSpace(idString))
             {
@@ -201,27 +213,6 @@ namespace API.Data
 
             using (var sql = new MySqlConnection(_baseDatos.ConnectionMYSQL()))
             {
-                using (var cmd = new MySqlCommand("sp_obtener_codigo_verificacion", sql))
-                {
-                    await sql.OpenAsync();
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("p_user_id", id);
-                        
-                    using (var reader = await cmd.ExecuteReaderAsync())
-                    {
-                        if (await reader.ReadAsync())
-                        {
-                            codigo = reader.GetString("codigo_verificacion");
-                        }
-
-                        else
-                        {
-                            throw new UsuarioNoEncontradoException();
-                        }
-
-                    }
-                }
-
                 if (codigo == parametros.codigo)
                 {
                     using (var cmd = new MySqlCommand("sp_actualizar_estado_verificacion", sql))

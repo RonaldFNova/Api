@@ -12,6 +12,6 @@ namespace API.Model
         [MinLength(6)]
         [MaxLength(10)]
         [Required(ErrorMessage = "El codigo de verificacion del usuario es obligatorio.")]
-        public string codigo { get; set; } = string.Empty;
+        public int codigo { get; set; }
     }
 }

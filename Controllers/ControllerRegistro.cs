@@ -57,7 +57,7 @@ namespace API.Controllers
 
 
     [ApiController]
-    [Route("Api/Registro/Reenviar-codigo")]
+    [Route("Api/Registro/Enviar-codigo")]
     public class ControllerReenviar: ControllerBase
     {   
          private readonly DataRegistro _dataRegistro;
@@ -70,11 +70,11 @@ namespace API.Controllers
         [HttpPost]
         [AllowAnonymous]
 
-        public async Task<ActionResult> Post([FromBody] ModelReenviar parametros)
+        public async Task<ActionResult> Post([FromBody] ModelEnviarCodigo parametros)
         {
-            await _dataRegistro.Reenviar(parametros);
+            await _dataRegistro.EnviarCodigo(parametros);
 
-            return Ok(new {mensaje = "Código reenviado correctamente"});
+            return Ok(new {mensaje = "Código enviado correctamente"});
         }
     }
 
