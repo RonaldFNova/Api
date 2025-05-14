@@ -3,28 +3,25 @@ using API.Security;
 
 namespace API.Data 
 {
-public class DataTokenVerificar
-{
-    private readonly TokenHelper _tokenHelper;
-
-    public DataTokenVerificar(TokenHelper tokenHelper)
+    public class DataTokenVerificar
     {
-        _tokenHelper = tokenHelper;
+        private readonly TokenHelper _tokenHelper;
+
+        public DataTokenVerificar(TokenHelper tokenHelper)
+        {
+            _tokenHelper = tokenHelper;
+        }
+
+        public async Task GetTokenVerificar(ModelTokenVerificar modelo)
+        {
+
+            if (string.IsNullOrEmpty(modelo.token))
+                throw new ArgumentException("Token vacío.");
+
+            string? userId = _tokenHelper.ObtenerUserIdDesdeTokenValidado(modelo.token);
+
+            if (string.IsNullOrEmpty(userId))
+                throw new UnauthorizedAccessException("Token inválido.");
+        }
     }
-
-    public async Task GetTokenVerificar(ModelTokenVerificar modelo)
-    {
-
-        if (string.IsNullOrEmpty(modelo.token))
-            throw new ArgumentException("Token vacío.");
-
-        string? userId = _tokenHelper.ObtenerUserIdDesdeTokenValidado(modelo.token);
-
-        if (string.IsNullOrEmpty(userId))
-            throw new UnauthorizedAccessException("Token inválido.");
-
-        Console.WriteLine(userId);
-    }
-}
-
 }

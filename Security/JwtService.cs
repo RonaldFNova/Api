@@ -17,9 +17,7 @@ namespace API.Security
         }
 
         public string GenerateToken(string userId)
-
         {
-
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_secretKey);
 
@@ -36,8 +34,29 @@ namespace API.Security
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            var tokenString = tokenHandler.WriteToken(token);
-            return tokenString;
+            return tokenHandler.WriteToken(token);
+        }
+
+        public string GenerateVerificationToken(string userId, string verificationCode, int customExpiryMinutes = 60)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_secretKey);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim("id", userId),
+                    new Claim("codigo", verificationCode)
+                }),
+                Expires = DateTime.UtcNow.AddMinutes(customExpiryMinutes),
+                SigningCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(key),
+                    SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
         }
     }
 }

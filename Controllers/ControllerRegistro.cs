@@ -58,12 +58,13 @@ namespace API.Controllers
 
     [ApiController]
     [Route("Api/Registro/Enviar-codigo")]
-    public class ControllerReenviar: ControllerBase
+    public class ControllerEnviarCodigo: ControllerBase
     {   
-         private readonly DataRegistro _dataRegistro;
-
-        public ControllerReenviar(DataRegistro dataRegistro)
+        private readonly DataRegistro _dataRegistro;
+        private readonly JwtService _jwtService;
+        public ControllerEnviarCodigo(DataRegistro dataRegistro,JwtService jwtService)
         {
+            _jwtService = jwtService;
             _dataRegistro = dataRegistro;
         }
 
@@ -72,9 +73,11 @@ namespace API.Controllers
 
         public async Task<ActionResult> Post([FromBody] ModelEnviarCodigo parametros)
         {
-            await _dataRegistro.EnviarCodigo(parametros);
+            (string id, string codigo) = await _dataRegistro.EnviarCodigo(parametros);
 
-            return Ok(new {mensaje = "Código enviado correctamente"});
+            var tokenCodigo = _jwtService.GenerateVerificationToken(id,codigo);
+
+            return Ok(new {mensaje = "Código enviado correctamente",tokenCodigo});
         }
     }
 
@@ -96,6 +99,7 @@ namespace API.Controllers
 
         public async Task<ActionResult> Post([FromBody] ModelConfirmacion parametros)
         {
+
             await _dataRegistro.ConfirmarVerificacion(parametros);
 
             return Ok(new { mensaje = "Código confirmado correctamente" });

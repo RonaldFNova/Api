@@ -10,7 +10,6 @@ namespace API.Data
 {
     public class DataRegistro 
     {
-
         private readonly ConnectionBD _baseDatos;
 
         private readonly CodigoVerificacionService _codigoVerificacionService;
@@ -102,12 +101,19 @@ namespace API.Data
                         }
                     }
                 }
+
+                using (var cmd = new MySqlCommand("sp_insert_verificacion", sql))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("p_user_id", userId);
+                    await cmd.ExecuteNonQueryAsync();
+                }
             }
 
             return userId;
         }
 
-        public async Task EnviarCodigo(ModelEnviarCodigo parametros)
+        public async Task<(string idString, string codigo)> EnviarCodigo(ModelEnviarCodigo parametros)
         {
             string email = string.Empty;
             
@@ -175,6 +181,7 @@ namespace API.Data
                 if (emailConfirmacionVerificacion =="False") throw new EstadoEmailVerificadoException();
             }
             await _emailService.SendEmailAsync(email,nombreCompleto,codigo);
+            return (idString, codigo);
         }
 
         public async Task EditarUsuario(ModelRegistro parametros)
@@ -200,16 +207,17 @@ namespace API.Data
 
         public async Task  ConfirmarVerificacion(ModelConfirmacion parametros)
         {
-            string? idString =_tokenHelper.ObtenerUserIdDesdeTokenValidado(parametros.token);
 
-            int codigo = 0;
-            
-            if (string.IsNullOrWhiteSpace(idString))
+            (string? idString, string codigoString) =_tokenHelper.ObtenerUserIdCodigoDesdeTokenValidado(parametros.tokenCodigo);
+
+            if (string.IsNullOrWhiteSpace(idString) ||string.IsNullOrWhiteSpace(codigoString))
             {
                 throw new TokenInvalidoException();
             }
 
             int id = Convert.ToInt32(idString);
+
+            int codigo = Convert.ToInt32(codigoString);
 
             using (var sql = new MySqlConnection(_baseDatos.ConnectionMYSQL()))
             {
@@ -220,6 +228,7 @@ namespace API.Data
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("p_user_id", id);
                         cmd.Parameters.AddWithValue("p_nuevo_estado", "Verificado");
+                        await sql.OpenAsync();
                         await cmd.ExecuteNonQueryAsync();
                     }
                 }
