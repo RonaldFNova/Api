@@ -104,20 +104,9 @@ namespace API.Data
                         }
                     }
                 }
-
-                using (var cmd = new MySqlCommand("sp_insert_verificacion", sql))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("p_user_id", userId);
-                    cmd.Parameters.AddWithValue("p_codigo_verificacion", codigoVerificacion);
-                    await cmd.ExecuteNonQueryAsync();
-                }
             }
-            
-            nombre = parametros.name;
-            await _emailService.SendEmailAsync(parametros.email,parametros.name,codigoVerificacion);
-            return userId;
 
+            return userId;
         }
 
         public async Task Reenviar(ModelReenviar parametros)
