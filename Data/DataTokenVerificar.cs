@@ -12,16 +12,24 @@ namespace API.Data
             _tokenHelper = tokenHelper;
         }
 
-        public async Task GetTokenVerificar(ModelTokenVerificar modelo)
+        public Task GetTokenVerificarId(ModelTokenVerificar modelo)
         {
-
-            if (string.IsNullOrEmpty(modelo.token))
-                throw new ArgumentException("Token vacío.");
 
             string? userId = _tokenHelper.ObtenerUserIdDesdeTokenValidado(modelo.token);
 
-            if (string.IsNullOrEmpty(userId))
-                throw new UnauthorizedAccessException("Token inválido.");
+            if (string.IsNullOrEmpty(userId)) throw new UnauthorizedAccessException("Token inválido.");
+            
+            return Task.CompletedTask;
+        }
+
+        public Task GetTokenVerificarCodigo(ModelTokenVerificar modelo)
+        {
+
+            (string? userId, string? codigo) = _tokenHelper.ObtenerUserIdCodigoDesdeTokenValidado(modelo.token);
+
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(codigo)) throw new UnauthorizedAccessException("Token inválido.");
+
+            return Task.CompletedTask;
         }
     }
 }

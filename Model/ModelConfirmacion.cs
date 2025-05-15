@@ -11,6 +11,6 @@ namespace API.Model
         [JsonPropertyName("codigo")]
         [Range(100000, 999999, ErrorMessage = "El código debe tener exactamente 6 dígitos.")]
 
-        public int codigo { get; set; }
+        public int codigo { get; set; } = 0;
     }
 }

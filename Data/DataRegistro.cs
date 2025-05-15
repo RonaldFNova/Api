@@ -20,9 +20,7 @@ namespace API.Data
 
         private readonly EmailService _emailService;
 
-        public int userId;
-    
-      
+
         public DataRegistro(PasswordHasher passwordHasher,CodigoVerificacionService codigoVerificacionService,
         EmailService emailService,TokenHelper tokenHelper, ConnectionBD baseDatos)
         {
@@ -70,6 +68,8 @@ namespace API.Data
 
         public async Task<int> InsertarUsuario(ModelRegistro parametros)
         {
+            int userId = 0;
+
             var codigoVerificacion = _codigoVerificacionService.GenerarCodigo();    
 
             var passHashed = _passwordHasher.HashPassword(parametros.pass);
@@ -130,7 +130,7 @@ namespace API.Data
                 throw new TokenInvalidoException();
             }
 
-            int id = Convert.ToInt32(idString);
+            int userId = Convert.ToInt32(idString);
             
             using (var sql = new MySqlConnection(_baseDatos.ConnectionMYSQL()))
             {       
@@ -139,7 +139,7 @@ namespace API.Data
                 using (var cmd = new MySqlCommand("sp_checkUserVerificationStatus", sql))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("p_user_id", id);
+                    cmd.Parameters.AddWithValue("p_user_id", userId);
 
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
@@ -153,7 +153,7 @@ namespace API.Data
                 using (var cmd = new MySqlCommand("sp_get_email_by_user_id", sql))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("p_user_id", id);
+                    cmd.Parameters.AddWithValue("p_user_id", userId);
 
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
@@ -167,7 +167,7 @@ namespace API.Data
                 using (var cmd = new MySqlCommand("sp_get_full_name_by_user_id", sql))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("p_user_id", id);
+                    cmd.Parameters.AddWithValue("p_user_id", userId);
 
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
@@ -208,14 +208,14 @@ namespace API.Data
         public async Task  ConfirmarVerificacion(ModelConfirmacion parametros)
         {
 
-            (string? idString, string codigoString) =_tokenHelper.ObtenerUserIdCodigoDesdeTokenValidado(parametros.tokenCodigo);
+            (string? idString, string? codigoString) =_tokenHelper.ObtenerUserIdCodigoDesdeTokenValidado(parametros.tokenCodigo);
 
             if (string.IsNullOrWhiteSpace(idString) ||string.IsNullOrWhiteSpace(codigoString))
             {
                 throw new TokenInvalidoException();
             }
 
-            int id = Convert.ToInt32(idString);
+            int userId = Convert.ToInt32(idString);
 
             int codigo = Convert.ToInt32(codigoString);
 
@@ -226,7 +226,7 @@ namespace API.Data
                     using (var cmd = new MySqlCommand("sp_actualizar_estado_verificacion", sql))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("p_user_id", id);
+                        cmd.Parameters.AddWithValue("p_user_id", userId);
                         cmd.Parameters.AddWithValue("p_nuevo_estado", "Verificado");
                         await sql.OpenAsync();
                         await cmd.ExecuteNonQueryAsync();

@@ -14,12 +14,7 @@ namespace API.Controllers
         private readonly DataRegistro _dataRegistro;
         private readonly JwtService _jwtService;
 
-
-
-        public ControllerRegistro(
-            DataRegistro dataRegistro,
-            JwtService jwtService
-           )
+        public ControllerRegistro(DataRegistro dataRegistro,JwtService jwtService)
         {
             _dataRegistro = dataRegistro;
             _jwtService = jwtService;
