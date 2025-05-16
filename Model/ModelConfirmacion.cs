@@ -6,11 +6,11 @@ namespace API.Model
     {
         [JsonPropertyName("tokenCodigo")]
         [Required(ErrorMessage = "El token del usuario es obligatorio.")]
-        public string tokenCodigo { get; set; } = string.Empty;
+        public string TokenCodigo { get; set; } = string.Empty;
 
         [JsonPropertyName("codigo")]
         [Range(100000, 999999, ErrorMessage = "El código debe tener exactamente 6 dígitos.")]
 
-        public int codigo { get; set; } = 0;
+        public int Codigo { get; set; } = 0;
     }
 }

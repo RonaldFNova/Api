@@ -30,10 +30,10 @@ namespace API.Data
                         {
                             var user = new ModelLogin
                             {
-                                id = reader.GetInt32("user_id"),
-                                email = reader.GetString("email"),
-                                pass = reader.GetString("Pass"),
-                                tipo = reader.GetString("user_type")
+                                Id = reader.GetInt32("user_id"),
+                                Email = reader.GetString("email"),
+                                Pass = reader.GetString("Pass"),
+                                Tipo = reader.GetString("user_type")
                             };
                             return user;
                         }

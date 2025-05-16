@@ -50,11 +50,11 @@ namespace API.Data
                         {
                             var registro = new ModelRegistro
                             {
-                                id = (int)reader["user_id"],
-                                name = reader["full_name"] != DBNull.Value ? (string)reader["full_name"] : string.Empty,
-                                email = reader["email"] != DBNull.Value ? (string)reader["email"] : string.Empty,
-                                pass = reader["Pass"] != DBNull.Value ? (string)reader["Pass"] : string.Empty,
-                                tipo = reader["user_type"] != DBNull.Value ? (string)reader["user_type"] : string.Empty
+                                Id = (int)reader["user_id"],
+                                Name = reader["full_name"] != DBNull.Value ? (string)reader["full_name"] : string.Empty,
+                                Email = reader["email"] != DBNull.Value ? (string)reader["email"] : string.Empty,
+                                Pass = reader["Pass"] != DBNull.Value ? (string)reader["Pass"] : string.Empty,
+                                Tipo = reader["user_type"] != DBNull.Value ? (string)reader["user_type"] : string.Empty
                             };
 
                             lista.Add(registro);
@@ -70,9 +70,7 @@ namespace API.Data
         {
             int userId = 0;
 
-            var codigoVerificacion = _codigoVerificacionService.GenerarCodigo();    
-
-            var passHashed = _passwordHasher.HashPassword(parametros.pass);
+            string passHashed = _passwordHasher.HashPassword(parametros.Pass);
 
             using (var sql = new MySqlConnection(_baseDatos.ConnectionMYSQL()))
             {
@@ -82,17 +80,17 @@ namespace API.Data
                 {
 
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("p_full_name", parametros.name);
-                    cmd.Parameters.AddWithValue("p_email", parametros.email);
+                    cmd.Parameters.AddWithValue("p_full_name", parametros.Name);
+                    cmd.Parameters.AddWithValue("p_email", parametros.Email);
                     cmd.Parameters.AddWithValue("p_pass", passHashed);
-                    cmd.Parameters.AddWithValue("p_user_type", parametros.tipo);
+                    cmd.Parameters.AddWithValue("p_user_type", parametros.Tipo);
                     await cmd.ExecuteNonQueryAsync();
                 }
 
                 using (var cmd = new MySqlCommand("sp_get_user_id_by_email", sql))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("p_email", parametros.email);
+                    cmd.Parameters.AddWithValue("p_email", parametros.Email);
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         if (await reader.ReadAsync())
@@ -123,7 +121,7 @@ namespace API.Data
 
             string codigo = _codigoVerificacionService.GenerarCodigo();
 
-            string? idString =_tokenHelper.ObtenerUserIdDesdeTokenValidado(parametros.token);
+            string? idString =_tokenHelper.ObtenerUserIdDesdeTokenValidado(parametros.Token);
 
             if (string.IsNullOrWhiteSpace(idString))
             {
@@ -187,18 +185,18 @@ namespace API.Data
         public async Task EditarUsuario(ModelRegistro parametros)
         {
   
-            var passHashed = _passwordHasher.HashPassword(parametros.pass);
+            string passHashed = _passwordHasher.HashPassword(parametros.Pass);
 
             using (var sql = new MySqlConnection(_baseDatos.ConnectionMYSQL()))
             {
                 using (var cmd = new MySqlCommand("sp_update_user", sql))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("p_user_id", parametros.id);
-                    cmd.Parameters.AddWithValue("p_full_name", parametros.name);
-                    cmd.Parameters.AddWithValue("p_email", parametros.email);
+                    cmd.Parameters.AddWithValue("p_user_id", parametros.Id);
+                    cmd.Parameters.AddWithValue("p_full_name", parametros.Name);
+                    cmd.Parameters.AddWithValue("p_email", parametros.Email);
                     cmd.Parameters.AddWithValue("p_pass", passHashed);
-                    cmd.Parameters.AddWithValue("p_user_type", parametros.tipo);
+                    cmd.Parameters.AddWithValue("p_user_type", parametros.Tipo);
                     await sql.OpenAsync();
                     await cmd.ExecuteNonQueryAsync();
                 }
@@ -208,7 +206,7 @@ namespace API.Data
         public async Task  ConfirmarVerificacion(ModelConfirmacion parametros)
         {
 
-            (string? idString, string? codigoString) =_tokenHelper.ObtenerUserIdCodigoDesdeTokenValidado(parametros.tokenCodigo);
+            (string? idString, string? codigoString) =_tokenHelper.ObtenerUserIdCodigoDesdeTokenValidado(parametros.TokenCodigo);
 
             if (string.IsNullOrWhiteSpace(idString) ||string.IsNullOrWhiteSpace(codigoString))
             {
@@ -221,7 +219,7 @@ namespace API.Data
 
             using (var sql = new MySqlConnection(_baseDatos.ConnectionMYSQL()))
             {
-                if (codigo == parametros.codigo)
+                if (codigo == parametros.Codigo)
                 {
                     using (var cmd = new MySqlCommand("sp_actualizar_estado_verificacion", sql))
                     {

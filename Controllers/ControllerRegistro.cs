@@ -44,7 +44,7 @@ namespace API.Controllers
 
         public async Task<ActionResult> Put(int id, [FromBody] ModelRegistro parametros)
         {
-            parametros.id = id;
+            parametros.Id = id;
             await _dataRegistro.EditarUsuario(parametros);
             return NoContent();
         }

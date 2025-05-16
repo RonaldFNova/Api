@@ -15,7 +15,7 @@ namespace API.Data
         public Task GetTokenVerificarId(ModelTokenVerificar modelo)
         {
 
-            string? userId = _tokenHelper.ObtenerUserIdDesdeTokenValidado(modelo.token);
+            string? userId = _tokenHelper.ObtenerUserIdDesdeTokenValidado(modelo.Token);
 
             if (string.IsNullOrEmpty(userId)) throw new UnauthorizedAccessException("Token inválido.");
             
@@ -25,7 +25,7 @@ namespace API.Data
         public Task GetTokenVerificarCodigo(ModelTokenVerificar modelo)
         {
 
-            (string? userId, string? codigo) = _tokenHelper.ObtenerUserIdCodigoDesdeTokenValidado(modelo.token);
+            (string? userId, string? codigo) = _tokenHelper.ObtenerUserIdCodigoDesdeTokenValidado(modelo.Token);
 
             if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(codigo)) throw new UnauthorizedAccessException("Token inválido.");
 

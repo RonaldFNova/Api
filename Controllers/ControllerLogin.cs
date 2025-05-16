@@ -25,23 +25,23 @@ namespace API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] ModelLogin loginRequest)
         {
-            var user = await _dataLogin.GetUserByEmailAsync(loginRequest.email);
+            var user = await _dataLogin.GetUserByEmailAsync(loginRequest.Email);
             if (user == null)
             {
                 return BadRequest(new { message = "Usuario incorrecto (user no encontrado)" });
             }
 
-            bool isPasswordValid = _passwordHasher.VerifyPassword(loginRequest.pass, user.pass);
+            bool isPasswordValid = _passwordHasher.VerifyPassword(loginRequest.Pass, user.Pass);
             if (!isPasswordValid)
             {
                 return BadRequest(new { message = "contraseña incorrectos (pass no válido)" });
             }
 
-            var token = _jwtService.GenerateToken(user.id.ToString());
+            var token = _jwtService.GenerateToken(user.Id.ToString());
 
-            await _dataLogin.InsertLoginAsync(user.email);
+            await _dataLogin.InsertLoginAsync(user.Email);
 
-            return Ok(new{mensaje = "Código reenviado correctamente",token,user_type = user.tipo});
+            return Ok(new{mensaje = "Código reenviado correctamente",token,user_type = user.Tipo});
             
         }
     }
