@@ -2,6 +2,7 @@ using API.Connection;
 using API.Model; 
 using MySql.Data.MySqlClient;
 using System.Data;
+
 namespace API.Data 
 {
     public class DataLogin
@@ -30,7 +31,7 @@ namespace API.Data
                         {
                             var user = new ModelLogin
                             {
-                                Id = reader.GetInt32("p_user_id"),
+                                Id = reader.GetInt32("nUserID"),
                                 Email = reader.GetString("cEmail"),
                                 Pass = reader.GetString("cPassword"),
                                 Tipo = reader.GetString("eRolUsuario")
