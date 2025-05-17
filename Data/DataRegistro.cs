@@ -95,7 +95,7 @@ namespace API.Data
                     {
                         if (await reader.ReadAsync())
                         {
-                            userId = reader.GetInt32("p_user_id");
+                            userId = reader.GetInt32("nUserID");
                         }
                     }
                 }
