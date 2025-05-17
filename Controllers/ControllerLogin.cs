@@ -37,7 +37,7 @@ namespace API.Controllers
                 return BadRequest(new { message = "contraseña incorrectos (pass no válido)" });
             }
 
-            var token = _jwtService.GenerateToken(user.Id.ToString());
+            var token = _jwtService.GenerateToken(user.Id.ToString(),user.Tipo);
 
             await _dataLogin.InsertLoginAsync(user.Id);
 

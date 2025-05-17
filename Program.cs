@@ -31,6 +31,8 @@ builder.Services.AddScoped<DataLogin>();
 
 builder.Services.AddScoped<DataRegistro>();
 
+builder.Services.AddScoped<DataPatientPersonalInform>();
+
 builder.Services.AddScoped<DataTokenVerificar>();
 
 builder.Services.AddScoped<CodigoVerificacionService>();

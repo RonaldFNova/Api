@@ -35,7 +35,7 @@ namespace API.Controllers
         public async Task<ActionResult> Post([FromBody] ModelRegistro parametros)
         {
             int id =  await _dataRegistro.InsertarUsuario(parametros);
-            var token = _jwtService.GenerateToken(id.ToString());
+            var token = _jwtService.GenerateToken(id.ToString(),parametros.Tipo);
             return Ok(new {mensaje = "Registro enviado correctamente", token});
         }
 

@@ -3,7 +3,8 @@ using System.Text.Json.Serialization;
 
 namespace API.Model
 {
-    public class ModelInformacionPersonal
+    public class ModelPatientPersonalInform
+
     {
         
         [JsonPropertyName("token")]
