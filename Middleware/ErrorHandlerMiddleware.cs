@@ -1,6 +1,6 @@
 using System.Net;
 using System.Text.Json;
-using MySql.Data.MySqlClient; 
+using MySql.Data.MySqlClient;
 using API.Error;
 
 namespace API.Middleware
@@ -26,7 +26,7 @@ namespace API.Middleware
             }
         }
 
-        private static Task HandleExceptionAsync(HttpContext context, Exception exception)
+        private Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             var response = context.Response;
             response.ContentType = "application/json";
@@ -57,52 +57,31 @@ namespace API.Middleware
                     break;
 
                 case UsuarioNoEncontradoException:
-                    statusCode = HttpStatusCode.NotFound;
-                    mensajeError = exception.Message;
-                    break;
-
                 case CodigoIncorrectoException:
-                    statusCode = HttpStatusCode.BadRequest;
-                    mensajeError = exception.Message;
-                    break;
-
                 case EmailNoEncontradoException:
-                    statusCode = HttpStatusCode.BadRequest;
-                    mensajeError = exception.Message;
-                    break;
-
                 case EstadoUsuarioVerificadoException:
-                    statusCode = HttpStatusCode.BadRequest;
-                    mensajeError = exception.Message;
-                    break;
-
                 case EstadoEmailVerificadoException:
-                    statusCode = HttpStatusCode.BadRequest;
-                    mensajeError = exception.Message;
-                    break;
-
                 case TokenExpiradoException:
-                    statusCode = HttpStatusCode.BadRequest;
-                    mensajeError = exception.Message;
-                    break;
-
                 case TokenInvalidoException:
                     statusCode = HttpStatusCode.BadRequest;
                     mensajeError = exception.Message;
                     break;
+
                 default:
+                    mensajeError = exception.Message;
                     break;
             }
 
             response.StatusCode = (int)statusCode;
+
             var result = JsonSerializer.Serialize(new
             {
-                error = mensajeError
+                error = mensajeError,
+                exception = exception.Message,
+                stackTrace = exception.StackTrace
             });
 
             return response.WriteAsync(result);
         }
     }
-
 }
-

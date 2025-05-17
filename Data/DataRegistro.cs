@@ -50,11 +50,11 @@ namespace API.Data
                         {
                             var registro = new ModelRegistro
                             {
-                                Id = (int)reader["user_id"],
-                                Name = reader["full_name"] != DBNull.Value ? (string)reader["full_name"] : string.Empty,
-                                Email = reader["email"] != DBNull.Value ? (string)reader["email"] : string.Empty,
-                                Pass = reader["Pass"] != DBNull.Value ? (string)reader["Pass"] : string.Empty,
-                                Tipo = reader["user_type"] != DBNull.Value ? (string)reader["user_type"] : string.Empty
+                                Id = (int)reader["p_user_id"],
+                                Name = reader["cNombre"] != DBNull.Value ? (string)reader["cNombre"] : string.Empty,
+                                Email = reader["cEmail"] != DBNull.Value ? (string)reader["cEmail"] : string.Empty,
+                                Pass = reader["cPassword"] != DBNull.Value ? (string)reader["cPassword"] : string.Empty,
+                                Tipo = reader["eRolUsuario"] != DBNull.Value ? (string)reader["eRolUsuario"] : string.Empty
                             };
 
                             lista.Add(registro);
@@ -80,10 +80,10 @@ namespace API.Data
                 {
 
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("p_full_name", parametros.Name);
+                    cmd.Parameters.AddWithValue("p_nombre", parametros.Name);
                     cmd.Parameters.AddWithValue("p_email", parametros.Email);
                     cmd.Parameters.AddWithValue("p_pass", passHashed);
-                    cmd.Parameters.AddWithValue("p_user_type", parametros.Tipo);
+                    cmd.Parameters.AddWithValue("p_rol", parametros.Tipo);
                     await cmd.ExecuteNonQueryAsync();
                 }
 
@@ -95,16 +95,9 @@ namespace API.Data
                     {
                         if (await reader.ReadAsync())
                         {
-                            userId = reader.GetInt32("user_id");
+                            userId = reader.GetInt32("p_user_id");
                         }
                     }
-                }
-
-                using (var cmd = new MySqlCommand("sp_insert_verificacion", sql))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("p_user_id", userId);
-                    await cmd.ExecuteNonQueryAsync();
                 }
             }
 
@@ -157,7 +150,7 @@ namespace API.Data
                     {
                         if (await reader.ReadAsync())
                         {
-                            email = reader.GetString("email");
+                            email = reader.GetString("cEmail");
                         }
                     }
                 }
@@ -171,7 +164,7 @@ namespace API.Data
                     {
                         if (await reader.ReadAsync())
                         {
-                            nombreCompleto = reader.GetString("full_name");
+                            nombreCompleto = reader.GetString("cNombre");
                         }
                     }
                 }

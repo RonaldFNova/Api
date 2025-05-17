@@ -39,7 +39,7 @@ namespace API.Controllers
 
             var token = _jwtService.GenerateToken(user.Id.ToString());
 
-            await _dataLogin.InsertLoginAsync(user.Email);
+            await _dataLogin.InsertLoginAsync(user.Id);
 
             return Ok(new{mensaje = "Código reenviado correctamente",token,user_type = user.Tipo});
             

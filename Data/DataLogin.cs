@@ -30,10 +30,10 @@ namespace API.Data
                         {
                             var user = new ModelLogin
                             {
-                                Id = reader.GetInt32("user_id"),
-                                Email = reader.GetString("email"),
-                                Pass = reader.GetString("Pass"),
-                                Tipo = reader.GetString("user_type")
+                                Id = reader.GetInt32("p_user_id"),
+                                Email = reader.GetString("cEmail"),
+                                Pass = reader.GetString("cPassword"),
+                                Tipo = reader.GetString("eRolUsuario")
                             };
                             return user;
                         }
@@ -43,14 +43,14 @@ namespace API.Data
             return null;
         }
 
-        public async Task InsertLoginAsync(string email)
+        public async Task InsertLoginAsync(int Id)
         {
             using (var sql = new MySqlConnection(_baseDatos.ConnectionMYSQL()))
             {
                 using (var cmd = new MySqlCommand("sp_insertLogin", sql))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("p_email", email);
+                    cmd.Parameters.AddWithValue("p_user_id", Id);
 
                     await sql.OpenAsync();
                     await cmd.ExecuteNonQueryAsync();
