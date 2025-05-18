@@ -4,6 +4,7 @@ using MySql.Data.MySqlClient;
 using System.Data;
 using API.Security;
 using API.Error;
+using System.Data.SqlClient;
 
 namespace API.Data 
 {
@@ -29,40 +30,6 @@ namespace API.Data
             _emailService = emailService;
             _baseDatos = baseDatos;
 
-        }
-
-        public async Task<List<ModelRegistro>> MostrarUsuario()
-        {
-
-            var lista = new List<ModelRegistro>();
-
-            using (var sql = new MySqlConnection(_baseDatos.ConnectionMYSQL()))
-            {
-                using (var cmd = new MySqlCommand("sp_get_user", sql))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await sql.OpenAsync();
-
-                    using (var reader = await cmd.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            var registro = new ModelRegistro
-                            {
-                                Id = (int)reader["p_user_id"],
-                                Name = reader["cNombre"] != DBNull.Value ? (string)reader["cNombre"] : string.Empty,
-                                Email = reader["cEmail"] != DBNull.Value ? (string)reader["cEmail"] : string.Empty,
-                                Pass = reader["cPassword"] != DBNull.Value ? (string)reader["cPassword"] : string.Empty,
-                                Tipo = reader["eRolUsuario"] != DBNull.Value ? (string)reader["eRolUsuario"] : string.Empty
-                            };
-
-                            lista.Add(registro);
-                        }
-                    }
-                }
-            }
-
-            return lista;
         }
 
         public async Task<int> InsertarUsuario(ModelRegistro parametros)
@@ -103,17 +70,91 @@ namespace API.Data
             return userId;
         }
 
+
+        public async Task EditarUsuario(ModelRegistro parametros)
+        {
+  
+            string passHashed = _passwordHasher.HashPassword(parametros.Pass);
+
+            using (var sql = new MySqlConnection(_baseDatos.ConnectionMYSQL()))
+            {
+                using (var cmd = new MySqlCommand("sp_update_user", sql))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("p_user_id", parametros.Id);
+                    cmd.Parameters.AddWithValue("p_nombre", parametros.Name);
+                    cmd.Parameters.AddWithValue("p_email", parametros.Email);
+                    cmd.Parameters.AddWithValue("p_pass", passHashed);
+                    cmd.Parameters.AddWithValue("p_rol", parametros.Tipo);
+                    await sql.OpenAsync();
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        public async Task<List<ModelRegistro>> MostrarUsuario()
+        {
+
+            var lista = new List<ModelRegistro>();
+
+            using (var sql = new MySqlConnection(_baseDatos.ConnectionMYSQL()))
+            {
+                using (var cmd = new MySqlCommand("sp_get_users", sql))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await sql.OpenAsync();
+
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            var registro = new ModelRegistro
+                            {
+                                Id = (int)reader["nUserID"],
+                                Name = reader["cNombre"] != DBNull.Value ? (string)reader["cNombre"] : string.Empty,
+                                Email = reader["cEmail"] != DBNull.Value ? (string)reader["cEmail"] : string.Empty,
+                                Pass = reader["cPassword"] != DBNull.Value ? (string)reader["cPassword"] : string.Empty,
+                                Tipo = reader["eRolUsuario"] != DBNull.Value ? (string)reader["eRolUsuario"] : string.Empty
+                            };
+
+                            lista.Add(registro);
+                        }
+                    }
+                }
+            }
+
+            return lista;
+        }
+
+
+        public async Task EliminarUsuario(int userId)
+        {
+            using (var sql = new MySqlConnection(_baseDatos.ConnectionMYSQL()))
+            {
+
+                await sql.OpenAsync();
+
+                using (var cmd = new MySqlCommand("sp_delete_user", sql))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("p_user_id", userId);
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        
         public async Task<(string idString, string codigo)> EnviarCodigo(ModelEnviarCodigo parametros)
         {
             string email = string.Empty;
-            
+
             string emailConfirmacionVerificacion = string.Empty;
 
             string nombreCompleto = string.Empty;
 
             string codigo = _codigoVerificacionService.GenerarCodigo();
 
-            string? idString =_tokenHelper.ObtenerUserIdDesdeTokenValidado(parametros.Token);
+            string? idString = _tokenHelper.ObtenerUserIdDesdeTokenValidado(parametros.Token);
 
             if (string.IsNullOrWhiteSpace(idString))
             {
@@ -121,9 +162,9 @@ namespace API.Data
             }
 
             int userId = Convert.ToInt32(idString);
-            
+
             using (var sql = new MySqlConnection(_baseDatos.ConnectionMYSQL()))
-            {       
+            {
                 await sql.OpenAsync();
 
                 using (var cmd = new MySqlCommand("sp_checkUserVerificationStatus", sql))
@@ -168,32 +209,12 @@ namespace API.Data
                     }
                 }
 
-                if (emailConfirmacionVerificacion =="False") throw new EstadoEmailVerificadoException();
+                if (emailConfirmacionVerificacion == "False") throw new EstadoEmailVerificadoException();
             }
-            await _emailService.SendEmailAsync(email,nombreCompleto,codigo);
+            await _emailService.SendEmailAsync(email, nombreCompleto, codigo);
             return (idString, codigo);
         }
 
-        public async Task EditarUsuario(ModelRegistro parametros)
-        {
-  
-            string passHashed = _passwordHasher.HashPassword(parametros.Pass);
-
-            using (var sql = new MySqlConnection(_baseDatos.ConnectionMYSQL()))
-            {
-                using (var cmd = new MySqlCommand("sp_update_user", sql))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("p_user_id", parametros.Id);
-                    cmd.Parameters.AddWithValue("p_full_name", parametros.Name);
-                    cmd.Parameters.AddWithValue("p_email", parametros.Email);
-                    cmd.Parameters.AddWithValue("p_pass", passHashed);
-                    cmd.Parameters.AddWithValue("p_user_type", parametros.Tipo);
-                    await sql.OpenAsync();
-                    await cmd.ExecuteNonQueryAsync();
-                }
-            }
-        }
 
         public async Task  ConfirmarVerificacion(ModelConfirmacion parametros)
         {

@@ -31,22 +31,34 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize (Roles = "Administrador")]
 
         public async Task<ActionResult<List<ModelRegistro>>> GET()
         {
             var lista = await _dataRegistro.MostrarUsuario();
-            return lista;
+            return Ok(new { mensaje = "Registros pedidos correctamente",lista});
+
         }
 
+
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize (Roles = "Administrador")]
 
         public async Task<ActionResult> PUT(int id, [FromBody] ModelRegistro parametros)
         {
             parametros.Id = id;
             await _dataRegistro.EditarUsuario(parametros);
-            return NoContent();
+            return Ok(new { mensaje = "Registro editado correctamente"});
+        }
+
+
+        [HttpDelete("{id}")]
+        [Authorize (Roles = "Administrador")]
+
+        public async Task<ActionResult> DELETE(int id)
+        {
+            await _dataRegistro.EliminarUsuario(id);
+            return Ok(new { mensaje = "Registro eliminado correctamente"});
         }
     }
 }
