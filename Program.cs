@@ -2,11 +2,11 @@ using API.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using API.Error;
 using API.Data;
 using API.Middleware;
 using API.Connection;
 using DotNetEnv;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
  
@@ -70,13 +70,22 @@ builder.Services.AddAuthentication(options =>
     {
         OnAuthenticationFailed = context =>
         {
-            if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+            if (context.Exception is SecurityTokenExpiredException)
             {
-                throw new TokenExpiradoException();
+                if (!context.Response.HasStarted)
+                {
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    context.Response.ContentType = "application/json";
+
+                    var result = JsonSerializer.Serialize(new { mensaje = "El token ha expirado." });
+                    return context.Response.WriteAsync(result);
+                }
             }
+
             return Task.CompletedTask;
         }
     };
+
 });
 
 

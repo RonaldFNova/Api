@@ -5,22 +5,17 @@ namespace API.Model
 {
     public class ModelPatientPersonalInform
     {
+        public int Id { get; set; } = 0;
         
         [JsonPropertyName("token")]
         [Required(ErrorMessage = "El token del usuario es obligatorio.")]
         public string Token {get; set;} = string.Empty;
 
-        [JsonPropertyName("name")]
-        public string Name { get; set; } = string.Empty;
-
-        [JsonPropertyName("email")]
-        public string Email { get; set; } = string.Empty;
-
         [JsonPropertyName("cell")]
         [Required(ErrorMessage = "El telefono del usuario es obligatorio.")]
         public string Cell { get; set; } = string.Empty;
 
-        [JsonPropertyName("id")]
+        [JsonPropertyName("userId")]
         [Required(ErrorMessage = "El tipo de id del usuario es obligatorio.")]
         public string TipoId { get; set; } = string.Empty;
 

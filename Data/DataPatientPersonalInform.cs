@@ -4,7 +4,7 @@ using API.Model;
 using API.Security;
 using MySql.Data.MySqlClient;
 
-namespace API.Data 
+namespace API.Data
 {
     public class DataPatientPersonalInform
     {
@@ -86,6 +86,78 @@ namespace API.Data
 
                         }
                     }
+                }
+            }
+        }
+
+
+        public async Task<List<ModelPatientPersonalInform>> MostrarInformacionPersonal()
+        {
+
+            var lista = new List<ModelPatientPersonalInform>();
+
+            using (var sql = new MySqlConnection(_baseDatos.ConnectionMYSQL()))
+            {
+                using (var cmd = new MySqlCommand("sp_MostrarPacientes", sql))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await sql.OpenAsync();
+
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            var paciente = new ModelPatientPersonalInform
+                            {
+                                Id = (int)reader["nPacienteID"],
+                                Cell = reader["cNroContacto"] != DBNull.Value ? (string)reader["cNroContacto"] : string.Empty,
+                                TipoId = reader["eTipoIdentificacion"] != DBNull.Value ? (string)reader["eTipoIdentificacion"] : string.Empty,
+                                PersonalId = reader["cNroIdentificacion"] != DBNull.Value ? (string)reader["cNroIdentificacion"] : string.Empty,
+                                BloodGroup = reader["eGrupoSanguineo"] != DBNull.Value ? (string)reader["eGrupoSanguineo"] : string.Empty
+
+                            };
+
+                            lista.Add(paciente);
+                        }
+                    }
+                }
+            }
+
+            return lista;
+        }
+
+
+        public async Task EditarInformacionPersonal(ModelPatientPersonalInform parametros)
+        {
+
+            using (var sql = new MySqlConnection(_baseDatos.ConnectionMYSQL()))
+            {
+                using (var cmd = new MySqlCommand("sp_ActualizarPaciente", sql))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("p_nPacienteID", parametros.Id);
+                    cmd.Parameters.AddWithValue("p_eTipoIdentificacion", parametros.TipoId);
+                    cmd.Parameters.AddWithValue("p_cNroIdentificacion", parametros.PersonalId);
+                    cmd.Parameters.AddWithValue("p_cNroContacto", parametros.Cell);
+                    cmd.Parameters.AddWithValue("p_eGrupoSanguineo", parametros.BloodGroup);
+                    await sql.OpenAsync();
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
+        }
+    
+        public async Task EliminarInformacionPersonal(int userId)
+        {
+            using (var sql = new MySqlConnection(_baseDatos.ConnectionMYSQL()))
+            {
+
+                await sql.OpenAsync();
+
+                using (var cmd = new MySqlCommand("sp_EliminarPaciente", sql))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("p_nPacienteID", userId);
+                    await cmd.ExecuteNonQueryAsync();
                 }
             }
         }
