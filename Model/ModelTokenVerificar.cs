@@ -9,5 +9,4 @@ namespace API.Model
         public string Token {get; set;} = string.Empty;
 
     }
-
 }

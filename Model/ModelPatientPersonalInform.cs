@@ -4,7 +4,6 @@ using System.Text.Json.Serialization;
 namespace API.Model
 {
     public class ModelPatientPersonalInform
-
     {
         
         [JsonPropertyName("token")]

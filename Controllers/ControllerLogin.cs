@@ -23,6 +23,7 @@ namespace API.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        
         public async Task<IActionResult> Login([FromBody] ModelLogin loginRequest)
         {
             var user = await _dataLogin.GetUserByEmailAsync(loginRequest.Email);
@@ -37,12 +38,11 @@ namespace API.Controllers
                 return BadRequest(new { message = "contraseña incorrectos (pass no válido)" });
             }
 
-            var token = _jwtService.GenerateToken(user.Id.ToString(),user.Tipo);
+            var token = _jwtService.GenerateToken(user.Id.ToString(), user.Tipo);
 
             await _dataLogin.InsertLoginAsync(user.Id);
 
-            return Ok(new{mensaje = "Código reenviado correctamente",token,user_type = user.Tipo});
-            
+            return Ok(new { mensaje = "Código reenviado correctamente", token, user_type = user.Tipo });
         }
     }
 }

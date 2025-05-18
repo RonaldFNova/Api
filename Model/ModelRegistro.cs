@@ -24,5 +24,4 @@ namespace API.Model
         public string Tipo { get; set; } = string.Empty;
 
     }
-
 }
