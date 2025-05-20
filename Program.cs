@@ -31,6 +31,8 @@ builder.Services.AddScoped<DataLogin>();
 
 builder.Services.AddScoped<DataRegistro>();
 
+builder.Services.AddScoped<dataTipoUser>();
+
 builder.Services.AddScoped<DataPatientPersonalInform>();
 
 builder.Services.AddScoped<DataTokenVerificar>();
@@ -51,7 +53,7 @@ builder.Services.AddControllers();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme    = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
 .AddJwtBearer(options =>
 {
@@ -59,10 +61,10 @@ builder.Services.AddAuthentication(options =>
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey         = new SymmetricSecurityKey(key),
-        ValidateIssuer           = false,
-        ValidateAudience         = false,
-        ClockSkew                = TimeSpan.Zero
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ClockSkew = TimeSpan.Zero
     };
 
 
@@ -87,6 +89,18 @@ builder.Services.AddAuthentication(options =>
     };
 
 });
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllLocalhost", policy =>
+    {
+        policy.SetIsOriginAllowed(origin => 
+            origin.StartsWith("http://localhost") || origin.StartsWith("http://127.0.0.1"))
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 
 
 var app = builder.Build();
