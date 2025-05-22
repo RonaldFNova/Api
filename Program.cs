@@ -31,7 +31,9 @@ builder.Services.AddScoped<DataLogin>();
 
 builder.Services.AddScoped<DataRegistro>();
 
-builder.Services.AddScoped<dataTipoUser>();
+builder.Services.AddScoped<DataMostrarDoctores>();
+
+builder.Services.AddScoped<DataTipoUser>();
 
 builder.Services.AddScoped<DataPatientPersonalInform>();
 
@@ -104,6 +106,8 @@ builder.Services.AddCors(options =>
 
 
 var app = builder.Build();
+
+app.UseCors("AllowAllLocalhost");
 
 app.UseMiddleware<ErrorHandlerMiddleware>();
 

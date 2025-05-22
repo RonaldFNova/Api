@@ -8,12 +8,12 @@ using System.Data;
 
 namespace API.Data
 {
-    public class dataTipoUser
+    public class DataTipoUser
     {
         public readonly TokenHelper _tokenHelper;
         public readonly ConnectionBD _connection;
 
-        public dataTipoUser(ConnectionBD connection, TokenHelper tokenHelper)
+        public DataTipoUser(ConnectionBD connection, TokenHelper tokenHelper)
         {
             _connection = connection;
             _tokenHelper = tokenHelper;

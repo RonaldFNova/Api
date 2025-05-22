@@ -10,9 +10,9 @@ namespace API.Controllers
     public class ControllerTipoUser : ControllerBase
     {
 
-        private readonly dataTipoUser _dataTipoUser;
+        private readonly DataTipoUser _dataTipoUser;
 
-        public ControllerTipoUser(dataTipoUser dataTipoUser)
+        public ControllerTipoUser(DataTipoUser dataTipoUser)
         {
             _dataTipoUser = dataTipoUser;
         }
