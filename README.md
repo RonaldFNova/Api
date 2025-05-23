@@ -109,12 +109,65 @@ curl -X POST https://tuapi.com/Api/Registro/Confirmar-codigo \
 - Si el código expira, el usuario deberá solicitar uno nuevo utilizando el endpoint `/Api/Registro/Enviar-codigo`.
 - Este sistema ayuda a prevenir cuentas falsas o maliciosas, mejorando la seguridad general del sistema.
 
+#### 4. Inicio de sesión de usuario (Login)
+Este endpoint permite a un usuario autenticarse en el sistema proporcionando su correo electrónico y contraseña. Si las credenciales son válidas, se devuelve un token JWT que puede usarse en solicitudes protegidas.  
+##### Ejemplo usando curl:
+```bash
+curl -X POST https://tuapi.com/Api/Login \
+  -H "Content-Type: application/json" \
+  -d '{
+        "email": "usuario@correo.com",
+        "pass": "tu_contraseña_segura"
+      }'
+```
+
+##### Respuesta exitosa (200 OK):  
+```bash
+{
+    "mensaje": "Código reenviado correctamente",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "user_type": "Doctor"
+}
+```
+
+##### Notas  
+- El token devuelto es un JWT (JSON Web Token) que debes enviar en las solicitudes posteriores para acceder a recursos protegidos.
+- El token devuelto representa la sesión del usuario y debe ser almacenado de forma segura en el cliente (por ejemplo, en localStorage o sessionStorage).
+- Se recomienda validar que el correo tenga formato válido antes de enviar.
+
+
+#### 5. Consulta del tipo de usuario (Tipo-user)
+Este endpoint permite al sistema identificar el tipo de cuenta asociada al token de autenticación. Es útil para determinar los permisos y roles del usuario (por ejemplo, "paciente", "doctor", etc.).
+##### Ejemplo usando curl;
+
+```bash
+curl -X POST https://tuapi.com/Api/Tipo-user \
+  -H "Content-Type: application/json" \
+  -d '{
+        "token": "eyJhbGciOiJIUzI1NiIsInR5c..."
+      }'
+```
+##### Respuesta exitosa (200 OK):  
+```bash
+{
+    "mensaje": "Tipo de usuario obtenido correctamente",
+    "tipo": "doctor"
+}
+
+```
+##### Notas:
+- El campo "tipo" puede devolver valores como "admin", "paciente", "doctor", etc., según la lógica de tu sistema.  
+- El token debe ser válido y corresponder a un usuario autenticado previamente.  
+- Este endpoint puede usarse tras el login o verificación para redirigir al usuario a la sección correspondiente de la aplicación según su rol.
+
+
 ### Endpoints principales
 
 - `POST /Api/Registro` - Registro de usuarios
 - `POST /Api/Registro/Enviar-codigo` - Enviar código de verificación
 - `POST /Api/Registro/Confirmar-codigo` - Confirmar código
 - `POST /Api/Login` - Inicio de sesión
+- `POST /Api/Tipo-user` - Mostrar tipo de usuarios
   
 ## Licencia
 
