@@ -15,7 +15,7 @@ namespace API.Model
         [Required(ErrorMessage = "El telefono del usuario es obligatorio.")]
         public string Cell { get; set; } = string.Empty;
 
-        [JsonPropertyName("userId")]
+        [JsonPropertyName("tipoId")]
         [Required(ErrorMessage = "El tipo de id del usuario es obligatorio.")]
         public string TipoId { get; set; } = string.Empty;
 

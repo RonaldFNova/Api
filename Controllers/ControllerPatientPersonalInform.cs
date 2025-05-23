@@ -23,7 +23,7 @@ namespace API.Controllers
         {
             await _dataPatientPersonalInform.InsertInformacionPersonal(parametros);
 
-            return Ok(new { mensaje = "La informacion enviada al paciente se registro correctamente" });
+            return Ok(new { mensaje = "La informacion enviada del paciente se registro correctamente" });
         }
 
         [HttpGet]
@@ -31,7 +31,7 @@ namespace API.Controllers
         public async Task<ActionResult<List<ModelPatientPersonalInform>>> GET()
         {
             var lista = await _dataPatientPersonalInform.MostrarInformacionPersonal();
-            return Ok(new { mensaje = "Pacientes pedidos correctamente",lista});;
+            return Ok(new { mensaje = "Pacientes pedidos correctamente",lista});
         }
 
         [HttpPut("{id}")]

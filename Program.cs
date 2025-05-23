@@ -35,6 +35,8 @@ builder.Services.AddScoped<DataMostrarDoctores>();
 
 builder.Services.AddScoped<DataTipoUser>();
 
+builder.Services.AddScoped<DataDoctorPersonalInform>();
+
 builder.Services.AddScoped<DataPatientPersonalInform>();
 
 builder.Services.AddScoped<DataTokenVerificar>();
