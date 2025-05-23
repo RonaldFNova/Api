@@ -65,7 +65,7 @@ curl -X POST https://tuapi.com/Api/Registro \
 
 #### 2. Envío de verificación de correo electrónico:  
 Para garantizar la seguridad y validez de los usuarios registrados, la API incluye un proceso de verificación de correo electrónico.
-##### Ejemplo usando curl;
+##### Ejemplo usando curl:
 ```bash
 curl -X POST https://tuapi.com/Api/Registro/Enviar-codigo \
   -H "Content-Type: application/json" \
@@ -88,7 +88,7 @@ curl -X POST https://tuapi.com/Api/Registro/Enviar-codigo \
 
 #### 3. Confirmación del código de verificación:  
 Después de recibir el código en tu correo, deberás enviarlo junto con el `tokenCodigo` para completar el proceso de verificación.
-##### Ejemplo usando curl;
+##### Ejemplo usando curl:
 ```bash
 curl -X POST https://tuapi.com/Api/Registro/Confirmar-codigo \
   -H "Content-Type: application/json" \
@@ -138,7 +138,7 @@ curl -X POST https://tuapi.com/Api/Login \
 
 #### 5. Consulta del tipo de usuario (Tipo-user)
 Este endpoint permite al sistema identificar el tipo de cuenta asociada al token de autenticación. Es útil para determinar los permisos y roles del usuario (por ejemplo, "paciente", "doctor", etc.).
-##### Ejemplo usando curl;
+##### Ejemplo usando curl:
 
 ```bash
 curl -X POST https://tuapi.com/Api/Tipo-user \
@@ -161,6 +161,64 @@ curl -X POST https://tuapi.com/Api/Tipo-user \
 - Este endpoint puede usarse tras el login o verificación para redirigir al usuario a la sección correspondiente de la aplicación según su rol.
 
 
+#### 6. Inserción de información personal del paciente (Personal-Paciente)
+Este endpoint permite registrar o actualizar los datos personales de un paciente una vez que ya ha sido autenticado. Es esencial para completar el perfil del usuario con información clínica y de contacto relevante.
+##### Ejemplo usando curl;
+```bash
+curl -X POST https://tuapi.com/Api/Informacion-Personal-Paciente \
+  -H "Content-Type: application/json" \
+  -d '{
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpX...,
+        "cell": "numero de telefono",
+        "tipoId": "Tipo de identificacion (Cedula de ciudadania, Cedula extranjera, otra)",
+        "personalId": "Numero de identificacion",
+        "bloodGroup": "Grupo sanguineo (A, B, AB, O)",
+        "alergiasGeneral": [(lista de las alergias (No son obliagatorios))],
+        "alergiasMedications": [(lista de las alergias a medicamentos (No son obliagatorios))]
+     }'
+```
+
+##### Respuesta exitosa (200 OK):
+```bash
+{
+    "mensaje": "La informacion enviada del paciente se registro correctamente"
+}
+```
+
+##### Notas:
+- El campo token debe ser válido y pertenecer a un usuario con tipo paciente.  
+- Los campos como   `cell `,  `bloodGroup `,  `personalId ` y  `tipoId ` son requeridos para tener un perfil completo.  
+- Si ya existe información previa, el backend puede optar por actualizarla o retornar un error dependiendo de la lógica implementada.  
+
+
+#### 7. Inserción de información personal del doctor (Personal-Doctor)  
+Este endpoint permite registrar o actualizar los datos personales de un doctor una vez que ya ha sido autenticado. Es crucial para identificar sus credenciales y especialidades médicas dentro del sistema.
+##### Ejemplo usando curl:
+```bash
+curl -X POST https://tuapi.com/Api/Informacion-Personal-Doctor \
+  -H "Content-Type: application/json" \
+  -d '{
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpX...,
+        "cell": "Número de teléfono",
+        "tipoId": "Tipo de identificación (Cedula de ciudadania, Cedula extranjera, otra)",
+        "personalId": "Número de identificación",
+        "especialidad": "Especialidad médica (Ej: Pediatría, Cardiología, etc)"
+     }'
+```
+
+##### Respuesta exitosa (200 OK):
+```bash
+{
+    "mensaje": "La informacion enviada del doctor se registró correctamente"
+}
+```
+
+##### Notas:
+- El campo token debe ser válido y pertenecer a un usuario con tipo doctor.
+- Los campos como   `cell `,  `personalId ` y  `tipoId ` son para completar el perfil profesional del doctor.
+- Si ya existe información previa, el backend puede optar por actualizarla o retornar un error dependiendo de la lógica implementada.
+- Este paso es importante para que el doctor pueda ser visible y seleccionable por los pacientes dentro del sistema.
+
 ### Endpoints principales
 
 - `POST /Api/Registro` - Registro de usuarios
@@ -168,7 +226,9 @@ curl -X POST https://tuapi.com/Api/Tipo-user \
 - `POST /Api/Registro/Confirmar-codigo` - Confirmar código
 - `POST /Api/Login` - Inicio de sesión
 - `POST /Api/Tipo-user` - Mostrar tipo de usuarios
-  
+- `POST /Api/Informacion-Personal-Paciente` - Registrar informacion personal del paciente
+- `POST /Api/Informacion-Personal-Doctor` - Registrar informacion personal del doctor
+
 ## Licencia
 
 Este proyecto está licenciado bajo los términos de la **Licencia Pública General GNU v3.0 (GPLv3)**.  
