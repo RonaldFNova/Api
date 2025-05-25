@@ -1,7 +1,9 @@
 using API.Connection;
-using API.Model; 
+using API.Model;
+using Microsoft.VisualBasic;
 using MySql.Data.MySqlClient;
 using System.Data;
+using System.Security.Cryptography.X509Certificates;
 
 namespace API.Data 
 {
@@ -14,7 +16,7 @@ namespace API.Data
             _baseDatos = baseDatos;
         }
 
-         public async Task<ModelLogin?> GetUserByEmailAsync(string email)
+        public async Task<ModelLogin?> GetUserByEmailAsync(string email)
         {
             using (var sql = new MySqlConnection(_baseDatos.ConnectionMYSQL()))
             {
@@ -57,6 +59,39 @@ namespace API.Data
                     await cmd.ExecuteNonQueryAsync();
                 }
             }
+        }
+
+        public async Task<List<ModelLogin>> MostrarLoginAsync(ModelLogin parametros)
+        {
+            var list = new List<ModelLogin>();
+
+            using (var sql = new MySqlConnection(_baseDatos.ConnectionMYSQL()))
+            {
+                using (var cmd = new MySqlCommand("sp_MostrarLogins", sql))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    await sql.OpenAsync();
+                    
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            var registro = new ModelLogin
+                            {
+                                Id = (int)reader["nLoginID"],
+                                Name = reader["cNombre"] != DBNull.Value ? (string)reader["cNombre"] : string.Empty,
+                                Tipo = reader["eRolUsuario"] != DBNull.Value ? (string)reader["eRolUsuario"] : string.Empty,
+                                Tiempo = (DateTime)reader["dLogin"]
+                            };
+
+                            list.Add(registro);
+                        }
+
+                    }
+                }
+            }
+
+            return list;
         }
     }
 }

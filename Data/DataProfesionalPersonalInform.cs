@@ -3,20 +3,22 @@ using API.Model;
 using API.Security;
 using MySql.Data.MySqlClient;
 using System.Data;
+using System.Text.Json;
+
 namespace API.Data
 {
-    public class DataDoctorPersonalInform
+    public class DataProfesionalPersonalInform
     {
         public readonly ConnectionBD _connectionBD;
         public readonly TokenHelper _tokenHelper;
 
-        public DataDoctorPersonalInform(ConnectionBD connectionBD, TokenHelper tokenHelper)
+        public DataProfesionalPersonalInform(ConnectionBD connectionBD, TokenHelper tokenHelper)
         {
             _connectionBD = connectionBD;
             _tokenHelper = tokenHelper;
         }
 
-        public async Task InsertarDoctorAsync(ModelDoctorPersonalInform parametros)
+        public async Task InsertarProfesionalAsync(ModelProfesionalPersonalInform parametros)
         {
 
             string? idString = _tokenHelper.ObtenerUserIdDesdeTokenValidado(parametros.Token);
@@ -27,14 +29,14 @@ namespace API.Data
             {
                 await sql.OpenAsync();
 
-                using (var cmd = new MySqlCommand("sp_InsertarDoctor", sql))
+                using (var cmd = new MySqlCommand("sp_InsertarMedico", sql))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("p_nUserFK", parametros.Id);
                     cmd.Parameters.AddWithValue("p_eTipoIdentificacion", parametros.TipoId);
                     cmd.Parameters.AddWithValue("p_cNroIdentificacion", parametros.PersonalId);
                     cmd.Parameters.AddWithValue("p_cNroContacto", parametros.Cell);
-                    cmd.Parameters.AddWithValue("p_cEspecialidad", parametros.Especialidad);
+                    cmd.Parameters.AddWithValue("p_especialidades", JsonSerializer.Serialize(parametros.Especialidad));
 
                     await cmd.ExecuteNonQueryAsync();
 

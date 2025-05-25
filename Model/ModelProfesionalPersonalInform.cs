@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace API.Model
 {
-    public class ModelDoctorPersonalInform
+    public class ModelProfesionalPersonalInform
     {
 
         public int Id { get; set; } = 0;
@@ -23,6 +23,6 @@ namespace API.Model
         public string PersonalId { get; set; } = string.Empty;
         [JsonPropertyName("especialidad")]
         [Required(ErrorMessage = "El campo especialidad es obligatorio")]
-        public string Especialidad { get; set; } = string.Empty;
+        public List<string>? Especialidad  { get; set; }
     }
 }

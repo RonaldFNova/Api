@@ -31,11 +31,11 @@ builder.Services.AddScoped<DataLogin>();
 
 builder.Services.AddScoped<DataRegistro>();
 
-builder.Services.AddScoped<DataMostrarDoctores>();
+builder.Services.AddScoped<DataMostrarMedicos>();
 
 builder.Services.AddScoped<DataTipoUser>();
 
-builder.Services.AddScoped<DataDoctorPersonalInform>();
+builder.Services.AddScoped<DataProfesionalPersonalInform>();
 
 builder.Services.AddScoped<DataPatientPersonalInform>();
 

@@ -7,24 +7,24 @@ using MySql.Data.MySqlClient;
 
 namespace API.Data
 {
-    public class DataMostrarDoctores
+    public class DataMostrarMedicos
     {
         public ConnectionBD _connection;
-        public DataMostrarDoctores(ConnectionBD connection)
+        public DataMostrarMedicos(ConnectionBD connection)
         {
             _connection = connection;
         }
 
-        public async Task<List<ModelMostrarDoctores>> MostrarDoctoresAsync()
+        public async Task<List<ModelMostrarMedicos>> MostrarMedicosAsync()
         {
 
-            var Lista = new List<ModelMostrarDoctores>();
+            var Lista = new List<ModelMostrarMedicos>();
 
             using (var sql = new MySqlConnection(_connection.ConnectionMYSQL()))
             {
                 await sql.OpenAsync();
 
-                using (var cmd = new MySqlCommand("spListarDoctores", sql))
+                using (var cmd = new MySqlCommand("spListarMedicos", sql))
                 {
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
@@ -32,13 +32,13 @@ namespace API.Data
                     {
                         while (await reader.ReadAsync())
                         {
-                            var doctor = new ModelMostrarDoctores
+                            var medico = new ModelMostrarMedicos
 
                             {
-                                Name = reader.GetString(reader.GetOrdinal("NombreDoctor"))
+                                Name = reader.GetString(reader.GetOrdinal("NombreMedico"))
                             };
 
-                            Lista.Add(doctor);
+                            Lista.Add(medico);
 
                         }
                     }
