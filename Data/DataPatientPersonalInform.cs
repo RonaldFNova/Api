@@ -17,14 +17,12 @@ namespace API.Data
         }
 
 
-        public async Task InsertInformacionPersonal(ModelPatientPersonalInform modelo)
+        public async Task InsertInformacionPersonal(ModelPatientPersonalInform parametros)
         {
-
-            string? idString = _tokenHelper.ObtenerUserIdDesdeTokenValidado(modelo.Token);
-
-            int userId = Convert.ToInt32(idString);
+            Console.WriteLine(parametros.Id);
 
             int pacienteId = 0;
+            
 
             using (var sql = new MySqlConnection(_baseDatos.ConnectionMYSQL()))
             {
@@ -33,11 +31,11 @@ namespace API.Data
                 using (var cmd = new MySqlCommand("sp_insertarPaciente", sql))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("p_nUserFK", userId);
-                    cmd.Parameters.AddWithValue("p_eTipoIdentificacion", modelo.TipoId);
-                    cmd.Parameters.AddWithValue("p_cNroIdentificacion", modelo.PersonalId);
-                    cmd.Parameters.AddWithValue("p_cNroContacto", modelo.Cell);
-                    cmd.Parameters.AddWithValue("p_eGrupoSanguineo", modelo.BloodGroup);
+                    cmd.Parameters.AddWithValue("p_nUserFK", parametros.Id);
+                    cmd.Parameters.AddWithValue("p_eTipoIdentificacion", parametros.TipoId);
+                    cmd.Parameters.AddWithValue("p_cNroIdentificacion", parametros.PersonalId);
+                    cmd.Parameters.AddWithValue("p_cNroContacto", parametros.Cell);
+                    cmd.Parameters.AddWithValue("p_eGrupoSanguineo", parametros.BloodGroup);
 
                     await cmd.ExecuteNonQueryAsync();
                 }
@@ -45,7 +43,7 @@ namespace API.Data
                 using (var cmd = new MySqlCommand("sp_getPacienteIdByUserId", sql))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("p_nUserID", userId);
+                    cmd.Parameters.AddWithValue("p_nUserID", parametros.Id);
 
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
@@ -56,9 +54,9 @@ namespace API.Data
                     }
                 }
 
-                if (modelo.AlergiasGeneral.Count != 0 && modelo.AlergiasGeneral != null)
+                if (parametros.AlergiasGeneral.Count != 0 && parametros.AlergiasGeneral != null)
                 {
-                    foreach (var alergia in modelo.AlergiasGeneral)
+                    foreach (var alergia in parametros.AlergiasGeneral)
                     {
                         using (var cmd = new MySqlCommand("sp_insertAlergiaGeneral", sql))
                         {
@@ -72,9 +70,9 @@ namespace API.Data
                     }
                 }
 
-                if (modelo.AlergiasMedications.Count != 0 && modelo.AlergiasMedications != null)
+                if (parametros.AlergiasMedications.Count != 0 && parametros.AlergiasMedications != null)
                 {
-                    foreach (var alergia in modelo.AlergiasMedications)
+                    foreach (var alergia in parametros.AlergiasMedications)
                     {
                         using (var cmd = new MySqlCommand("sp_insertAlergiaMedicamento", sql))
                         {

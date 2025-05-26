@@ -6,7 +6,7 @@ using API.Data;
 using API.Middleware;
 using API.Connection;
 using DotNetEnv;
-using System.Text.Json;
+using API.Error;
 
 var builder = WebApplication.CreateBuilder(args);
  
@@ -78,14 +78,7 @@ builder.Services.AddAuthentication(options =>
         {
             if (context.Exception is SecurityTokenExpiredException)
             {
-                if (!context.Response.HasStarted)
-                {
-                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                    context.Response.ContentType = "application/json";
-
-                    var result = JsonSerializer.Serialize(new { mensaje = "El token ha expirado." });
-                    return context.Response.WriteAsync(result);
-                }
+                throw new TokenExpiradoException();
             }
 
             return Task.CompletedTask;
@@ -115,6 +108,8 @@ var app = builder.Build();
 app.UseCors("AllowAllLocalhost");
 
 app.UseMiddleware<ErrorHandlerMiddleware>();
+
+app.UseMiddleware<CodigoTokenMiddleware>();
 
 app.UseHttpsRedirection();
 

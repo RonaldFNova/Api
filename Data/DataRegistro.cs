@@ -144,7 +144,7 @@ namespace API.Data
         }
 
         
-        public async Task<(string idString, string codigo)> EnviarCodigo(ModelEnviarCodigo parametros)
+        public async Task<string> EnviarCodigo(int Id)
         {
             string email = string.Empty;
 
@@ -154,14 +154,7 @@ namespace API.Data
 
             string codigo = _codigoVerificacionService.GenerarCodigo();
 
-            string? idString = _tokenHelper.ObtenerUserIdDesdeTokenValidado(parametros.Token);
-
-            if (string.IsNullOrWhiteSpace(idString))
-            {
-                throw new TokenInvalidoException();
-            }
-
-            int userId = Convert.ToInt32(idString);
+            int userId = Convert.ToInt32(Id);
 
             using (var sql = new MySqlConnection(_baseDatos.ConnectionMYSQL()))
             {
@@ -212,42 +205,23 @@ namespace API.Data
                 if (emailConfirmacionVerificacion == "False") throw new EstadoEmailVerificadoException();
             }
             await _emailService.SendEmailAsync(email, nombreCompleto, codigo);
-            return (idString, codigo);
+            return codigo;
         }
 
 
-        public async Task  ConfirmarVerificacion(ModelConfirmacion parametros)
+        public async Task  ConfirmarVerificacion(int Id)
         {
-
-            (string? idString, string? codigoString) =_tokenHelper.ObtenerUserIdCodigoDesdeTokenValidado(parametros.TokenCodigo);
-
-            if (string.IsNullOrWhiteSpace(idString) ||string.IsNullOrWhiteSpace(codigoString))
-            {
-                throw new TokenInvalidoException();
-            }
-
-            int userId = Convert.ToInt32(idString);
-
-            int codigo = Convert.ToInt32(codigoString);
 
             using (var sql = new MySqlConnection(_baseDatos.ConnectionMYSQL()))
             {
-                if (codigo == parametros.Codigo)
+              
+                using (var cmd = new MySqlCommand("sp_actualizar_estado_verificacion", sql))
                 {
-                    using (var cmd = new MySqlCommand("sp_actualizar_estado_verificacion", sql))
-                    {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("p_user_id", userId);
-                        cmd.Parameters.AddWithValue("p_nuevo_estado", "Verificado");
-                        await sql.OpenAsync();
-                        await cmd.ExecuteNonQueryAsync();
-                    }
-                }
-
-                else
-                {
-                    throw new CodigoIncorrectoException();
-
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("p_user_id", Id);
+                    cmd.Parameters.AddWithValue("p_nuevo_estado", "Verificado");
+                    await sql.OpenAsync();
+                    await cmd.ExecuteNonQueryAsync();
                 }
             }
         }

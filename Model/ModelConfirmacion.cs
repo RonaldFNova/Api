@@ -4,13 +4,12 @@ namespace API.Model
 {
     public class ModelConfirmacion
     {
-        [JsonPropertyName("tokenCodigo")]
-        [Required(ErrorMessage = "El token del usuario es obligatorio.")]
-        public string TokenCodigo { get; set; } = string.Empty;
 
         [JsonPropertyName("codigo")]
+        [Required(ErrorMessage = "El codigo de verificacion es obligatorio")]
         [Range(100000, 999999, ErrorMessage = "El código debe tener exactamente 6 dígitos.")]
 
         public int Codigo { get; set; } = 0;
+
     }
 }

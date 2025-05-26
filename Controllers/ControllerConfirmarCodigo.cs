@@ -2,6 +2,7 @@ using API.Data;
 using API.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using API.Error;
 
 namespace API.Controllers
 {
@@ -18,12 +19,24 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize(Roles = "Paciente,Medico,Enfermero")] 
 
         public async Task<ActionResult> Post([FromBody] ModelConfirmacion parametros)
         {
+            var userIdString = HttpContext.Items["CodigoToken_UserId"] as string;
+            var codigoString = HttpContext.Items["CodigoToken_Codigo"] as string;
+            
+            int userId = int.Parse(userIdString);
 
-            await _dataRegistro.ConfirmarVerificacion(parametros);
+            int codigo = int.Parse(codigoString);
+
+            if (codigo != parametros.Codigo)
+            {
+                throw new CodigoIncorrectoException();
+            }
+
+
+            await _dataRegistro.ConfirmarVerificacion(userId);
 
             return Ok(new { mensaje = "Código confirmado correctamente" });
         }

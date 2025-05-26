@@ -21,11 +21,15 @@ namespace API.Controllers
         [HttpPost]
         [AllowAnonymous]
 
-        public async Task<ActionResult> POST([FromBody] ModelEnviarCodigo parametros)
+        public async Task<ActionResult> POST()
         {
-            (string id, string codigo) = await _dataRegistro.EnviarCodigo(parametros);
+            var userIdClaim = User.FindFirst("id");
+            int userId = int.Parse(userIdClaim.Value);
 
-            var tokenCodigo = _jwtService.GenerateVerificationToken(id, codigo);
+
+            string codigo = await _dataRegistro.EnviarCodigo(userId);
+
+            var tokenCodigo = _jwtService.GenerateVerificationToken(userIdClaim.Value, codigo);
 
             return Ok(new { mensaje = "Código enviado correctamente", tokenCodigo });
         }

@@ -18,6 +18,13 @@ namespace API.Middleware
         {
             try
             {
+                var customToken = context.Request.Headers["X-Codigo-Token"].FirstOrDefault();
+
+                if (!string.IsNullOrEmpty(customToken))
+                {
+                    context.Items["TokenCodigo"] = customToken;
+                }
+                
                 await _next(context);
             }
             catch (Exception ex)

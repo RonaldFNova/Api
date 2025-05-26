@@ -2,6 +2,7 @@ using API.Data;
 using API.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace API.Controllers
 {
@@ -17,10 +18,15 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Paciente")]
+        [Authorize(Roles = "Paciente")] 
 
         public async Task<IActionResult> POST([FromBody] ModelPatientPersonalInform parametros)
         {
+            var userIdClaim = User.FindFirst("id");
+            int userId = int.Parse(userIdClaim.Value);
+
+            parametros.Id = userId;
+
             await _dataPatientPersonalInform.InsertInformacionPersonal(parametros);
 
             return Ok(new { mensaje = "La informacion enviada del paciente se registro correctamente" });
