@@ -20,6 +20,10 @@ namespace API.Controllers
         [Authorize(Roles = "Medico,Administrador,Enfermero")]
         public async Task<IActionResult> POST([FromBody] ModelProfesionalPersonalInform parametros)
         {
+            var userIdClaim = User.FindFirst("id");
+            
+            parametros.Id = int.Parse(userIdClaim.Value);
+
             await _dataProfesionalPersonalInform.InsertarProfesionalAsync(parametros);
             return Ok (new { mensaje = "La informacion enviada del doctor se registro correctamente"});
         }

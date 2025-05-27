@@ -1,5 +1,3 @@
-using API.Data;
-using API.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
@@ -10,21 +8,13 @@ namespace API.Controllers
     public class ControllerTokenVerificarCodigo : ControllerBase
     {
 
-        private readonly DataTokenVerificar _datatokenverificar;
-
-        public ControllerTokenVerificarCodigo(DataTokenVerificar datatokenverificar)
-        {
-            _datatokenverificar = datatokenverificar;
-        }
-
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize(Roles ="Administrador,Medico,Paciente")]
 
-        public async Task<ActionResult> Post([FromBody] ModelTokenVerificar parametros)
+        public Task<ActionResult> POST()
         {
-            await _datatokenverificar.GetTokenVerificarCodigo(parametros);
 
-            return Ok(new { mensaje = "El token esta correcto" });
+            return  Task.FromResult<ActionResult>(Ok(new { mensaje = "El tokenCodigo esta correcto" }));
         }
     }
 }

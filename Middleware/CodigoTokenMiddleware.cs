@@ -1,6 +1,6 @@
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+using System.Text.Json;
 using System.Text;
 
 namespace API.Middleware
@@ -10,11 +10,11 @@ namespace API.Middleware
         private readonly RequestDelegate _next;
         private readonly string _secretKey;
 
-        public CodigoTokenMiddleware(RequestDelegate next)
+        public CodigoTokenMiddleware(RequestDelegate next, IConfiguration config)
         {
             _next = next;
-            _secretKey = Environment.GetEnvironmentVariable("JwtSecretKey")
-                         ?? throw new Exception("No se encontró la variable de entorno 'JwtSecretKey'.");
+            _secretKey = config["JwtSecretKey"] ??
+            throw new Exception("No se encontró la variable de entorno 'JwtSecretKey'.");
         }
 
         public async Task Invoke(HttpContext context)
@@ -22,17 +22,23 @@ namespace API.Middleware
             var path = context.Request.Path.Value;
 
             var requiereCodigo = path != null && (
-                path.Contains("/Confirmar-codigo")
+                path.Contains("/Confirmar-codigo") ||
+                path.Contains("/Confirmar-jwt-codigo")
             );
 
             if (requiereCodigo)
             {
-                var token = context.Request.Headers["TokenCodigo"].FirstOrDefault();
+                var token = context.Request.Headers["TokenCodigo"].FirstOrDefault()?.Trim();
 
-                if (string.IsNullOrEmpty(token))
+                if (string.IsNullOrWhiteSpace(token))
                 {
-                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                    await context.Response.WriteAsync("TokenCodigo requerido.");
+                    context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                    context.Response.ContentType = "application/json";
+
+                    var error = new { error = "TokenCodigo requerido." };
+                    var json = JsonSerializer.Serialize(error);
+
+                    await context.Response.WriteAsync(json);
                     return;
                 }
 
@@ -62,7 +68,12 @@ namespace API.Middleware
                 catch (Exception ex)
                 {
                     context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                    await context.Response.WriteAsync("TokenCodigo inválido: " + ex.Message);
+                    context.Response.ContentType = "application/json";
+
+                    var error = new { error = "TokenCodigo inválido: " + ex.Message };
+                    var json = JsonSerializer.Serialize(error);
+
+                    await context.Response.WriteAsync(json);
                     return;
                 }
             }

@@ -18,10 +18,14 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize(Roles ="Administrador,Medico,Paciente")]
 
-        public async Task<ActionResult> POST([FromBody] ModelTipoUser parametros)
+        public async Task<ActionResult> POST([FromForm] ModelTipoUser parametros)
         {
+            var userIdClaim = User.FindFirst("id");
+
+            parametros.Id = int.Parse(userIdClaim.Value);
+
             await _dataTipoUser.tipoUserAsyns(parametros);
 
             return Ok(new { mensaje = "Tipo de usuario enviado correctamente", parametros.Tipo });

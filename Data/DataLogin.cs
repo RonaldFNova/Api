@@ -1,9 +1,7 @@
 using API.Connection;
 using API.Model;
-using Microsoft.VisualBasic;
 using MySql.Data.MySqlClient;
 using System.Data;
-using System.Security.Cryptography.X509Certificates;
 
 namespace API.Data 
 {

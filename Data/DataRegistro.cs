@@ -16,15 +16,12 @@ namespace API.Data
 
         private readonly PasswordHasher _passwordHasher;
 
-        private readonly TokenHelper _tokenHelper;
-
         private readonly EmailService _emailService;
 
 
         public DataRegistro(PasswordHasher passwordHasher,CodigoVerificacionService codigoVerificacionService,
-        EmailService emailService,TokenHelper tokenHelper, ConnectionBD baseDatos)
+        EmailService emailService, ConnectionBD baseDatos)
         {
-            _tokenHelper = tokenHelper;
             _passwordHasher = passwordHasher;
             _codigoVerificacionService = codigoVerificacionService;
             _emailService = emailService;

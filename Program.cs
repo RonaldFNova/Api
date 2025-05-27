@@ -39,8 +39,6 @@ builder.Services.AddScoped<DataProfesionalPersonalInform>();
 
 builder.Services.AddScoped<DataPatientPersonalInform>();
 
-builder.Services.AddScoped<DataTokenVerificar>();
-
 builder.Services.AddScoped<CodigoVerificacionService>();
 
 builder.Services.AddScoped<EmailService>();

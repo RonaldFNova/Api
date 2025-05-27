@@ -10,21 +10,16 @@ namespace API.Data
 {
     public class DataTipoUser
     {
-        public readonly TokenHelper _tokenHelper;
         public readonly ConnectionBD _connection;
 
-        public DataTipoUser(ConnectionBD connection, TokenHelper tokenHelper)
+        public DataTipoUser(ConnectionBD connection)
         {
             _connection = connection;
-            _tokenHelper = tokenHelper;
         }
 
         public async Task tipoUserAsyns(ModelTipoUser parametros)
         {
-            string? idString = _tokenHelper.ObtenerUserIdDesdeTokenValidado(parametros.Token);
-            int id = Convert.ToInt32(idString);
-
-
+        
             using (var sql = new MySqlConnection(_connection.ConnectionMYSQL()))
             {
                 await sql.OpenAsync();
@@ -32,7 +27,7 @@ namespace API.Data
                 using (var cmd = new MySqlCommand("sp_ObtenerRolUsuario", sql))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("pUserID", id);
+                    cmd.Parameters.AddWithValue("pUserID", parametros.Id);
 
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {

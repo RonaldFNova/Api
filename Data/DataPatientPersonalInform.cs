@@ -9,20 +9,16 @@ namespace API.Data
     public class DataPatientPersonalInform
     {
         private readonly ConnectionBD _baseDatos;
-        private readonly TokenHelper _tokenHelper;
-        public DataPatientPersonalInform(ConnectionBD baseDatos, TokenHelper tokenHelper)
+        public DataPatientPersonalInform(ConnectionBD baseDatos)
         {
             _baseDatos = baseDatos;
-            _tokenHelper = tokenHelper;
         }
 
 
         public async Task InsertInformacionPersonal(ModelPatientPersonalInform parametros)
         {
-            Console.WriteLine(parametros.Id);
 
             int pacienteId = 0;
-            
 
             using (var sql = new MySqlConnection(_baseDatos.ConnectionMYSQL()))
             {

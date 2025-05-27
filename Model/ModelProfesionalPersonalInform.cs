@@ -8,9 +8,6 @@ namespace API.Model
 
         public int Id { get; set; } = 0;
         
-        [JsonPropertyName("token")]
-        [Required(ErrorMessage = "El campo token es obligatorio")]
-        public string Token { get; set; } = string.Empty;
         [JsonPropertyName("cell")]
         [Required(ErrorMessage = "El campo cell es obligatorio")]
         public string Cell { get; set; } = string.Empty;
