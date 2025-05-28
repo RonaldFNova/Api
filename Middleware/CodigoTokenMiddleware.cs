@@ -10,11 +10,10 @@ namespace API.Middleware
         private readonly RequestDelegate _next;
         private readonly string _secretKey;
 
-        public CodigoTokenMiddleware(RequestDelegate next, IConfiguration config)
+        public CodigoTokenMiddleware(RequestDelegate next, string secretKey)
         {
             _next = next;
-            _secretKey = config["JwtSecretKey"] ??
-            throw new Exception("No se encontró la variable de entorno 'JwtSecretKey'.");
+            _secretKey = secretKey ?? throw new Exception("JwtSecretKey no está configurado.");
         }
 
         public async Task Invoke(HttpContext context)

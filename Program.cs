@@ -51,6 +51,14 @@ builder.Services.AddSingleton<ConnectionBD>();
 
 builder.Services.AddControllers();
 
+builder.Services.AddSingleton<string>(provider =>
+{
+    var path = "/etc/secrets/JwtSecretKey";
+    if (!File.Exists(path))
+        throw new Exception("No se encontró el archivo JwtSecretKey.");
+
+    return File.ReadAllText(path).Trim();
+});
 
 builder.Services.AddAuthentication(options =>
 {
