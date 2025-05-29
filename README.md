@@ -212,13 +212,84 @@ curl -X POST https://tuapi.com/Api/Informacion-Personal-Profesional \
 }
 ```
 
-
-
 ##### Notas:
 - El campo token debe ser válido y pertenecer a un usuario con tipo doctor.
 - Los campos como   `cell `,  `personalId ` y  `tipoId ` son para completar el perfil profesional.
 - Si ya existe información previa, el backend puede optar por actualizarla o retornar un error dependiendo de la lógica implementada.
 - Este paso es importante para que el profesional pueda ser visible y seleccionable por los pacientes dentro del sistema.
+
+
+#### 8. Inserción de horario del medico (Horario-medico)  
+Este endpoint permite registrar los horarios disponibles de atención médica para un profesional autenticado. Si no se especifica un día, se asignará por defecto un horario de lunes a viernes en doble jornada (mañana y tarde), evitando solapamientos.
+##### Ejemplo usando curl:
+```bash
+curl -X POST https://tuapi.com/Api/Horario-medico \
+  -H "Authorization: Bearer <token de sesión>" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "dia": "Lunes",
+        "horaInicio": "08:00:00",
+        "horaFin": "12:00:00"
+      }'
+
+```
+
+##### Ejemplo sin día (se aplicará horario por defecto de lunes a viernes):
+```bash
+curl -X POST https://tuapi.com/Api/Horario-medico \
+  -H "Authorization: Bearer <token de sesión)" \
+  -H "Content-Type: application/json" \
+  -d '{}'
+```
+
+##### Respuesta exitosa (200 OK):
+```bash
+{
+    "mensaje": "Horarios insertados correctamente"
+}
+```
+
+##### Notas:
+- Los días válidos son: `"Lunes"`, `"Martes"`, `"Miércoles"`, `"Jueves"`, `"Viernes"`, `"Sábado"`, `"Domingo"`.  
+- La hora debe estar en formato `"HH:mm:ss"` y `horaInicio` debe ser menor que `horaFin`.  
+- Si no se envía el campo dia, se aplicará automáticamente un horario estándar:  
+- Lunes a Viernes  
+ Mañana: 06:00 - 11:00  
+ Tarde: 14:00 - 17:00  
+- No se permiten solapamientos de horarios; si el horario choca con uno existente, el backend devolverá un error.  
+- El token debe pertenecer a un usuario con rol `Medico`.
+
+
+
+#### 9. Consulta de médicos por especialidad (Clasificar-medico)
+Este endpoint permite obtener una lista de médicos que están clasificados por una especialidad médica específica. Es útil para que los pacientes puedan filtrar doctores por el tipo de atención que necesitan.
+##### Ejemplo usando curl:
+```bash
+curl -X POST https://tuapi.com/Api/Clasificar-medico \
+  -H "Authorization: Bearer <token de sesión>" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "especialidad": "Pediatría"
+      }'
+```
+
+##### Respuesta exitosa (200 OK):
+```bash
+{
+    "mensaje": "Médicos encontrados correctamente",
+    "medicos": [
+        "Dra. Laura García",
+        "Dr. Juan Pérez",
+        "Dra. Sofía Ramírez"
+    ]
+}
+```
+
+##### Notas:
+- El campo especialidad debe coincidir con una especialidad válida registrada en el sistema (por ejemplo: `"Cardiología"`, `"Dermatología"`, `"Medicina General"`, etc.).  
+- El token debe ser válido. No es necesario que el usuario sea médico; puede ser un paciente buscando atención.  
+- Este endpoint es útil para poblar listas desplegables o mostrar resultados filtrados al usuario final.  
+- Si no hay médicos registrados bajo esa especialidad, se devuelve un arreglo vacío sin error.  
 
 ### Endpoints principales
 
@@ -229,6 +300,9 @@ curl -X POST https://tuapi.com/Api/Informacion-Personal-Profesional \
 - `POST /Api/Tipo-user` - Mostrar el tipo de usuario
 - `POST /Api/Informacion-Personal-Paciente` - Registrar informacion personal del paciente
 - `POST /Api/Informacion-Personal-Profesional` - Registrar informacion personal del medico
+- `POST /Api/Horario-medico` - Registrar el horario del medico
+- `POST /Api/Clasificar-medico` - Obtener lista de medicos
+
 
 ## Licencia
 
