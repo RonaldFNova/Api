@@ -9,20 +9,35 @@ using DotNetEnv;
 using API.Error;
 
 var builder = WebApplication.CreateBuilder(args);
- 
 
-string secretKeyPath = "/etc/secrets/JwtSecretKey";
-string _secretKey;
+// 1. Configuración de rutas para la clave JWT
+string secretKeyPath = Path.Combine(builder.Environment.ContentRootPath, "secrets", "JwtSecretKey");
+string _secretKey = "";
 
-if (File.Exists(secretKeyPath)) _secretKey = File.ReadAllText(secretKeyPath).Trim();
-
+// 2. Carga jerárquica de la clave secreta
+if (File.Exists(secretKeyPath))
+{
+    _secretKey = File.ReadAllText(secretKeyPath).Trim();
+    Console.WriteLine($"Clave cargada desde archivo: {secretKeyPath}");
+}
 else
-{        
-    Env.Load();
-    _secretKey = Environment.GetEnvironmentVariable("JwtSecretKey") ?? string.Empty;
+{
+    // 3. Carga desde .env en desarrollo
+    Env.Load(Path.Combine(builder.Environment.ContentRootPath, ".env"));
+    _secretKey = Environment.GetEnvironmentVariable("JwtSecretKey") ?? "";
+    Console.WriteLine("Clave cargada desde variables de entorno");
 }
 
-if (string.IsNullOrWhiteSpace(_secretKey)) throw new Exception("No se ha configurado JwtSecretKey.");
+// 4. Validación robusta
+if (string.IsNullOrWhiteSpace(_secretKey))
+{
+    throw new InvalidOperationException(
+        "FALLA CRÍTICA: No se configuró JWT_SECRET_KEY. " +
+        "Verifica:\n" +
+        $"1. Archivo .env en {Path.Combine(builder.Environment.ContentRootPath, ".env")}\n" +
+        $"2. Archivo secreto en {secretKeyPath}\n" +
+        "3. Variables de entorno del sistema");
+}
 
 
 builder.Services.AddSingleton(new JwtService(_secretKey));
@@ -30,6 +45,8 @@ builder.Services.AddSingleton(new JwtService(_secretKey));
 builder.Services.AddScoped<DataLogin>();
 
 builder.Services.AddScoped<DataRegistro>();
+
+builder.Services.AddScoped<DataHorarioMedico>();
 
 builder.Services.AddScoped<DataMostrarMedicos>();
 
@@ -51,14 +68,7 @@ builder.Services.AddSingleton<ConnectionBD>();
 
 builder.Services.AddControllers();
 
-builder.Services.AddSingleton<string>(provider =>
-{
-    var path = "/etc/secrets/JwtSecretKey";
-    if (!File.Exists(path))
-        throw new Exception("No se encontró el archivo JwtSecretKey.");
 
-    return File.ReadAllText(path).Trim();
-});
 
 builder.Services.AddAuthentication(options =>
 {
