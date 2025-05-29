@@ -39,10 +39,7 @@ namespace API.Data
                             listaNombre.Add(nombre);
 
                         }
-
                     }
-
-
                 }
 
                 return listaNombre;

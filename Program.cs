@@ -10,11 +10,11 @@ using API.Error;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Configuración de rutas para la clave JWT
-string secretKeyPath = Path.Combine(builder.Environment.ContentRootPath, "secrets", "JwtSecretKey");
+
+string secretKeyPath = "/etc/secrets/JwtSecretKey";
 string _secretKey = "";
 
-// 2. Carga jerárquica de la clave secreta
+
 if (File.Exists(secretKeyPath))
 {
     _secretKey = File.ReadAllText(secretKeyPath).Trim();
@@ -22,13 +22,12 @@ if (File.Exists(secretKeyPath))
 }
 else
 {
-    // 3. Carga desde .env en desarrollo
     Env.Load(Path.Combine(builder.Environment.ContentRootPath, ".env"));
     _secretKey = Environment.GetEnvironmentVariable("JwtSecretKey") ?? "";
     Console.WriteLine("Clave cargada desde variables de entorno");
 }
 
-// 4. Validación robusta
+
 if (string.IsNullOrWhiteSpace(_secretKey))
 {
     throw new InvalidOperationException(
