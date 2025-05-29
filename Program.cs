@@ -38,6 +38,7 @@ if (string.IsNullOrWhiteSpace(_secretKey))
         "3. Variables de entorno del sistema");
 }
 
+builder.Services.AddSingleton(_secretKey);
 
 builder.Services.AddSingleton(new JwtService(_secretKey));
 

@@ -10,10 +10,12 @@ namespace API.Middleware
         private readonly RequestDelegate _next;
         private readonly string _secretKey;
 
-        public CodigoTokenMiddleware(RequestDelegate next, IConfiguration secretKey)
+        public CodigoTokenMiddleware(RequestDelegate next, string secretKey)
         {
             _next = next;
-            _secretKey = secretKey["JwtSecretKey"] ?? throw new Exception("JwtSecretKey no está configurado.");
+            _secretKey =  !string.IsNullOrWhiteSpace(secretKey)
+                     ? secretKey
+                     : throw new Exception("JwtSecretKey no está configurado.");
         }
 
         public async Task Invoke(HttpContext context)
