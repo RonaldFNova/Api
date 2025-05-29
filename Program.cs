@@ -48,6 +48,8 @@ builder.Services.AddScoped<DataRegistro>();
 
 builder.Services.AddScoped<DataHorarioMedico>();
 
+builder.Services.AddScoped<DataClasificarMedico>();
+
 builder.Services.AddScoped<DataMostrarMedicos>();
 
 builder.Services.AddScoped<DataTipoUser>();
