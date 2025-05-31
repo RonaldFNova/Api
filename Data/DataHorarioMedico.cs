@@ -42,18 +42,43 @@ namespace API.Data
             return medicoId;
 
         }
+        
 
-        public async Task InsertHorarioMedicoAsync(int id, ModelHorarioMedico parametros)
+        public async Task InsertaDiasMedicoAsync(int id)
         {
+
             using (var sql = new MySqlConnection(_connectionBD.ConnectionMYSQL()))
             {
                 await sql.OpenAsync();
 
-                using (var cmd = new MySqlCommand("sp_InsertarHorarioMedico", sql))
+                using (var cmd = new MySqlCommand("sp_GenerarDisponibilidad", sql))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
 
-                    cmd.Parameters.AddWithValue("p_nMedicoFK", id);
+                    cmd.Parameters.AddWithValue("p_nProfesionalFK", id);
+                    cmd.Parameters.AddWithValue("p_fechaInicio", DateTime.UtcNow);
+                    cmd.Parameters.AddWithValue("p_duracionCita", 60);
+
+                    await cmd.ExecuteNonQueryAsync();
+                }
+
+                await sql.CloseAsync();
+
+            }
+        }
+
+        public async Task InsertHorarioMedicoAsync(int id, ModelHorarioMedico parametros)
+        {
+
+            using (var sql = new MySqlConnection(_connectionBD.ConnectionMYSQL()))
+            {
+                await sql.OpenAsync();
+
+                using (var cmd = new MySqlCommand("sp_InsertarHorarioProfesional", sql))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.AddWithValue("p_nProfesionalFK", id);
                     cmd.Parameters.AddWithValue("p_eDiaSemana", parametros.Dia);
                     cmd.Parameters.AddWithValue("p_tHoraInicio", parametros.Inicio);
                     cmd.Parameters.AddWithValue("p_tHoraFin", parametros.Final);
@@ -61,6 +86,7 @@ namespace API.Data
                     await cmd.ExecuteNonQueryAsync();
 
                 }
+
                 await sql.CloseAsync();
             }
         }
@@ -95,7 +121,7 @@ namespace API.Data
             foreach (var dias in listaDiasDefectos)
             {
 
-            using var cmd = new MySqlCommand("sp_InsertarHorarioMedico", sql)
+            using var cmd = new MySqlCommand("sp_InsertarHorarioProfesional", sql)
             {
                 CommandType = CommandType.StoredProcedure
             };
@@ -106,7 +132,7 @@ namespace API.Data
                 {
                     cmd.Parameters.Clear();
 
-                    cmd.Parameters.AddWithValue("p_nMedicoFK", id);
+                    cmd.Parameters.AddWithValue("p_nProfesionalFK", id);
                     cmd.Parameters.AddWithValue("p_eDiaSemana", dias);
                     cmd.Parameters.AddWithValue("p_tHoraInicio", horario[0]);
                     cmd.Parameters.AddWithValue("p_tHoraFin", horario[1]);

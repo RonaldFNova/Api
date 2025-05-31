@@ -7,10 +7,10 @@ namespace API.Model
         [JsonPropertyName("dia")]
         public string Dia { get; set; } = string.Empty;
 
-        [JsonPropertyName("inicio")]
+        [JsonPropertyName("horaInicio")]
         public TimeSpan? Inicio { get; set; }
 
-        [JsonPropertyName("final")]
+        [JsonPropertyName("horaFin")]
         public TimeSpan? Final { get; set; }
     }
 }

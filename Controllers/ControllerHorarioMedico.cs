@@ -17,7 +17,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize(Roles = "Medico,Administrador,Enfermero")]
         public async Task<IActionResult> POST([FromBody] ModelHorarioMedico parametros)
         {
 
@@ -32,6 +32,9 @@ namespace API.Controllers
 
             else
                 await _dataHorarioMedico.InsertHorarioMedicoAsync(id, parametros);
+
+
+            await _dataHorarioMedico.InsertaDiasMedicoAsync(id);
         
 
             return Ok(new { mensaje = "Horarios insertados correctamente" });

@@ -54,6 +54,10 @@ builder.Services.AddScoped<DataMostrarMedicos>();
 
 builder.Services.AddScoped<DataTipoUser>();
 
+builder.Services.AddScoped<DataInsertarCitaMedica>();
+
+builder.Services.AddScoped<DataMedicoFecha>();
+
 builder.Services.AddScoped<DataProfesionalPersonalInform>();
 
 builder.Services.AddScoped<DataPatientPersonalInform>();

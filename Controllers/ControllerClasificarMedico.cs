@@ -21,11 +21,10 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> POST([FromBody] ModelClasificarMedico parametros)
         {
-            Console.WriteLine("2");
 
-            var lista = await _dataClasificarMedico.ObtenerListaMedicoClasificarAsync(parametros);
+            var medicos = await _dataClasificarMedico.ObtenerListaMedicoClasificarAsync(parametros);
 
-            return Ok(new { mensaje = "La lista de usuarios se obtuvo de manera correcta", lista });
+            return Ok(new { mensaje = "La lista de medicos se obtuvo de manera correcta", medicos });
         }   
 
     }
