@@ -289,7 +289,42 @@ curl -X POST https://tuapi.com/Api/Clasificar-medico \
 - El campo especialidad debe coincidir con una especialidad válida registrada en el sistema (por ejemplo: `"Cardiología"`, `"Dermatología"`, `"Medicina General"`, etc.).  
 - El token debe ser válido. No es necesario que el usuario sea médico; puede ser un paciente buscando atención.  
 - Este endpoint es útil para poblar listas desplegables o mostrar resultados filtrados al usuario final.  
-- Si no hay médicos registrados bajo esa especialidad, se devuelve un arreglo vacío sin error.  
+- Si no hay médicos registrados bajo esa especialidad, se devuelve un arreglo vacío sin error.
+
+#### 10. Consulta de horarios disponibles por médico (Medico-fecha)
+Este endpoint permite obtener los horarios disponibles de un médico específico, según su nombre. Es útil para que los pacientes puedan visualizar las horas en que un médico está disponible para agendar una cita.
+
+##### Ejemplo usando curl:
+```bash
+curl -X POST https://tuapi.com/Api/Medico-fecha \
+  -H "Authorization: Bearer <token de sesión>" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "nombre": "jose"
+      }'
+```
+##### Respuesta exitosa (200 OK):
+```bash
+[
+    "2025-06-03 (10:00 - 11:00)",
+    "2025-06-03 (14:00 - 15:00)",
+    "2025-06-03 (15:00 - 16:00)",
+    "2025-06-03 (16:00 - 17:00)",
+    "2025-06-04 (06:00 - 07:00)",
+    "2025-06-04 (07:00 - 08:00)",
+    "2025-06-04 (08:00 - 09:00)",
+    "2025-06-04 (09:00 - 10:00)"
+]
+```
+##### Notas:
+- El campo nombre debe coincidir con el nombre completo registrado del médico en el sistema.  
+- El token debe ser válido para que la petición sea autorizada.  
+- Las fechas y horarios devueltos corresponden a la disponibilidad real del médico y se presentan en formato legible (YYYY-MM-DD (HH:mm - HH:mm)).  
+- Este endpoint puede ser usado para mostrar al paciente un selector de horarios disponibles antes de confirmar una cita.  
+- Si el médico no tiene horarios disponibles, se devuelve un arreglo vacío sin error.
+
+
+
 
 ### Endpoints principales
 
@@ -302,6 +337,7 @@ curl -X POST https://tuapi.com/Api/Clasificar-medico \
 - `POST /Api/Informacion-Personal-Profesional` - Registrar informacion personal del medico
 - `POST /Api/Horario-medico` - Registrar el horario del medico
 - `POST /Api/Clasificar-medico` - Obtener lista de medicos
+- `POST /Api/Medico-fecha` - Obtener lista de horarios del medico
 
 
 ## Licencia
