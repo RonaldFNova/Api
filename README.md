@@ -317,27 +317,63 @@ curl -X POST https://tuapi.com/Api/Medico-fecha \
 ]
 ```
 ##### Notas:
-- El campo nombre debe coincidir con el nombre completo registrado del médico en el sistema.  
+- El campo `nombre` debe coincidir con el nombre completo registrado del médico en el sistema.  
 - El token debe ser válido para que la petición sea autorizada.  
-- Las fechas y horarios devueltos corresponden a la disponibilidad real del médico y se presentan en formato legible (YYYY-MM-DD (HH:mm - HH:mm)).  
+- Las fechas y horarios devueltos corresponden a la disponibilidad real del médico y se presentan en formato legible `(YYYY-MM-DD (HH:mm - HH:mm))`.  
 - Este endpoint puede ser usado para mostrar al paciente un selector de horarios disponibles antes de confirmar una cita.  
 - Si el médico no tiene horarios disponibles, se devuelve un arreglo vacío sin error.
 
 
+#### 11. Inserción de una nueva cita médica (Insertar-cita)
+Este endpoint permite a un paciente agendar una nueva cita médica con un profesional de salud, especificando el nombre del médico, la fecha, el horario y el motivo de la consulta.
 
+##### Ejemplo usando curl:
+```bash
+curl -X POST https://tuapi.com/Api/Insertar-cita \
+  -H "Authorization: Bearer <token de sesión>" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "nombre": "jose",
+        "fechaInicial": "10:00:00",
+        "fechaFinal": "11:00:00",
+        "diaFecha": "2025-06-03",
+        "motivoConsulta": "Tengo dolor de cabeza."
+      }'
+```
+
+##### Respuesta exitosa (200 OK):
+```bash
+{
+    "Mensaje": "La cita se a agendado correctamente"
+}
+
+```
+
+##### Notas:
+- El campo `nombre` debe coincidir exactamente con el nombre del médico registrado en el sistema.  
+- `fechaInicial` y `fechaFinal` deben estar en formato `HH:mm:ss` (hora militar).  
+- `diaFecha` debe estar en formato `YYYY-MM-DD`.  
+- El campo `motivoConsulta` es obligatorio y debe describir brevemente el motivo por el cual se solicita la cita.  
+- El token de autorización debe ser válido.  
+- Si el horario solicitado ya está ocupado o no está disponible, el sistema responderá con un mensaje de error indicando la situación.  
+- Este endpoint es fundamental para la funcionalidad de agendamiento de citas en el sistema.  
+- No se permite que un paciente tenga más de una cita activa con médicos del mismo tipo de especialidad en fechas futuras.  
+- No se permite que un paciente agende dos citas en el mismo horario aunque sean con diferentes profesionales.
+  
 
 ### Endpoints principales
 
-- `POST /Api/Registro` - Registro de usuarios
-- `POST /Api/Registro/Enviar-codigo` - Enviar código de verificación
-- `POST /Api/Registro/Confirmar-codigo` - Confirmar código
-- `POST /Api/Login` - Inicio de sesión
-- `POST /Api/Tipo-user` - Mostrar el tipo de usuario
-- `POST /Api/Informacion-Personal-Paciente` - Registrar informacion personal del paciente
-- `POST /Api/Informacion-Personal-Profesional` - Registrar informacion personal del medico
-- `POST /Api/Horario-medico` - Registrar el horario del medico
-- `POST /Api/Clasificar-medico` - Obtener lista de medicos
-- `POST /Api/Medico-fecha` - Obtener lista de horarios del medico
+- `POST /Api/Registro` - Registro de usuarios  
+- `POST /Api/Registro/Enviar-codigo` - Enviar código de verificación  
+- `POST /Api/Registro/Confirmar-codigo` - Confirmar código  
+- `POST /Api/Login` - Inicio de sesión  
+- `POST /Api/Tipo-user` - Mostrar el tipo de usuario  
+- `POST /Api/Informacion-Personal-Paciente` - Registrar informacion personal del paciente  
+- `POST /Api/Informacion-Personal-Profesional` - Registrar informacion personal del medico  
+- `POST /Api/Horario-medico` - Registrar el horario del medico  
+- `POST /Api/Clasificar-medico` - Obtener lista de medicos  
+- `POST /Api/Medico-fecha` - Obtener lista de horarios del medico  
+- `POST /Api/Insertar-cita` - Inserta una cita medica  
 
 
 ## Licencia
