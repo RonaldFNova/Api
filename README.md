@@ -170,6 +170,7 @@ curl -X POST https://tuapi.com/Api/Informacion-Personal-Paciente \
         "tipoId": "Cedula de ciudadania",
         "personalId": "Numero de cedula",
         "bloodGroup": "Tipo de sangre",
+        "direccion": "Direccion de vivienda",
         "alergiasGeneral": ["Polen", "Polvo"],
         "alergiasMedications": ["Penicilina", "Ibuprofeno"]
       }'
@@ -185,7 +186,7 @@ curl -X POST https://tuapi.com/Api/Informacion-Personal-Paciente \
 
 ##### Notas:
 - El campo token debe ser válido y pertenecer a un usuario con tipo paciente.  
-- Los campos como   `cell `,  `bloodGroup `,  `personalId ` y  `tipoId ` son requeridos para tener un perfil completo.  
+- Los campos como   `cell `,  `bloodGroup `,  `personalId `,  `tipoId ` y `direccion` son requeridos para tener un perfil completo.  
 - Si ya existe información previa, el backend puede optar por actualizarla o retornar un error dependiendo de la lógica implementada.  
 
 
@@ -200,6 +201,7 @@ curl -X POST https://tuapi.com/Api/Informacion-Personal-Profesional \
         "cell": "Numero de telefono",
         "tipoId": "Cedula de ciudadania",
         "personalId": "Numero de cedula",
+        "direccion": "Direccion de vivienda",
         "especialidad": ["Pediatría", "Cardiología"]
       }'
 
@@ -213,8 +215,8 @@ curl -X POST https://tuapi.com/Api/Informacion-Personal-Profesional \
 ```
 
 ##### Notas:
-- El campo token debe ser válido y pertenecer a un usuario con tipo doctor.
-- Los campos como   `cell `,  `personalId ` y  `tipoId ` son para completar el perfil profesional.
+- El campo token debe ser válido y pertenecer a un usuario con tipo medico.
+- Los campos como   `cell `,  `personalId `, `tipoId ` y `direccion` son para completar el perfil profesional.
 - Si ya existe información previa, el backend puede optar por actualizarla o retornar un error dependiendo de la lógica implementada.
 - Este paso es importante para que el profesional pueda ser visible y seleccionable por los pacientes dentro del sistema.
 
