@@ -6,7 +6,7 @@ namespace API.Model
     public class ModelPatientPersonalInform
     {
         public int Id { get; set; } = 0;
-        
+
 
         [JsonPropertyName("cell")]
         [Required(ErrorMessage = "El telefono del usuario es obligatorio.")]
@@ -26,9 +26,13 @@ namespace API.Model
 
         [JsonPropertyName("alergiasGeneral")]
         public List<string>? AlergiasGeneral { get; set; }
-        
+
         [JsonPropertyName("alergiasMedications")]
         public List<string>? AlergiasMedications { get; set; }
+
+        [JsonPropertyName("direccion")]
+        [Required(ErrorMessage = "La direccion del paciente es obligatoria")]
+        public string Direccion { get; set; } = string.Empty;
         
     }
 }

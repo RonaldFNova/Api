@@ -13,7 +13,7 @@ namespace API.Controllers
     {
         private readonly DataConfirmarCodigoSms _dataConfirmarCodigoSms;
 
-        public ControllerConfirmarCodigoSms (DataConfirmarCodigoSms dataConfirmarCodigoSms)
+        public ControllerConfirmarCodigoSms(DataConfirmarCodigoSms dataConfirmarCodigoSms)
         {
             _dataConfirmarCodigoSms = dataConfirmarCodigoSms;
         }

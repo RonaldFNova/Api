@@ -7,7 +7,7 @@ namespace API.Model
     {
 
         public int Id { get; set; } = 0;
-        
+
         [JsonPropertyName("cell")]
         [Required(ErrorMessage = "El campo cell es obligatorio")]
         public string Cell { get; set; } = string.Empty;
@@ -20,6 +20,10 @@ namespace API.Model
         public string PersonalId { get; set; } = string.Empty;
         [JsonPropertyName("especialidad")]
         [Required(ErrorMessage = "El campo especialidad es obligatorio")]
-        public List<string>? Especialidad  { get; set; }
+        public List<string>? Especialidad { get; set; }
+        
+        [JsonPropertyName("direccion")]
+        [Required(ErrorMessage = "La direccion del paciente es obligatoria")]
+        public string Direccion { get; set; } = string.Empty;
     }
 }

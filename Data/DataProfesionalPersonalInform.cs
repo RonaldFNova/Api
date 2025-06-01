@@ -30,6 +30,8 @@ namespace API.Data
                     cmd.Parameters.AddWithValue("p_cNroIdentificacion", parametros.PersonalId);
                     cmd.Parameters.AddWithValue("p_cNroContacto", parametros.Cell);
                     cmd.Parameters.AddWithValue("p_datos", JsonSerializer.Serialize(parametros.Especialidad));
+                    cmd.Parameters.AddWithValue("p_cDireccion", parametros.Direccion);
+
 
                     await cmd.ExecuteNonQueryAsync();
 
