@@ -31,7 +31,7 @@ namespace API.Controllers
 
             await _dataInsertarCitaMedica.InsertarCitaMedicaAsync(parametros, idMedico, idPaciente);
 
-            return Ok(new { Mensaje = "La cita se a saacado correctamente" });
+            return Ok(new { Mensaje = "La cita se a agendado correctamente" });
 
         }
     }

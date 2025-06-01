@@ -29,7 +29,7 @@ namespace API.Controllers
 
             string codigo = await _dataRegistro.EnviarCodigo(userId);
 
-            var tokenCodigo = _jwtService.GenerateVerificationToken(userIdClaim.Value, codigo);
+            var tokenCodigo =  _jwtService.GenerateVerificationToken(userIdClaim.Value, codigo);
 
             return Ok(new { mensaje = "Código enviado correctamente", tokenCodigo });
         }

@@ -24,7 +24,10 @@ namespace API.Middleware
 
             var requiereCodigo = path != null && (
                 path.Contains("/Confirmar-codigo") ||
-                path.Contains("/Confirmar-jwt-codigo")
+                path.Contains("/Confirmar-jwt-codigo") ||
+                path.Contains("/Verificacion-sms/Recibir-codigo")
+    
+
             );
 
             if (requiereCodigo)

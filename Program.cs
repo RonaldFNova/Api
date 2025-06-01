@@ -58,6 +58,10 @@ builder.Services.AddScoped<DataInsertarCitaMedica>();
 
 builder.Services.AddScoped<DataMedicoFecha>();
 
+builder.Services.AddScoped<DataEnviarCodigoSms>();
+
+builder.Services.AddScoped<DataConfirmarCodigoSms>();
+
 builder.Services.AddScoped<DataProfesionalPersonalInform>();
 
 builder.Services.AddScoped<DataPatientPersonalInform>();
@@ -65,6 +69,8 @@ builder.Services.AddScoped<DataPatientPersonalInform>();
 builder.Services.AddScoped<CodigoVerificacionService>();
 
 builder.Services.AddScoped<EmailService>();
+
+builder.Services.AddScoped<SmsCodeVerificacionServices>();
 
 builder.Services.AddScoped<TokenHelper>();
 
@@ -146,3 +152,4 @@ app.MapControllers();
 app.MapGet("/", () => "Hello World!");
 
 app.Run();
+

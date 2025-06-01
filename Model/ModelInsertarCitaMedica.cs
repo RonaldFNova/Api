@@ -22,7 +22,7 @@ namespace API.Model
         public string Nombre { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "El motivo de consulta es obligatorio")]
-        [JsonPropertyName("motivoConsulta")]
+        [JsonPropertyName("motivoConsulta")]                
         public string MotivoConsulta { get; set; } = string.Empty;
 
     }

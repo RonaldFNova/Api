@@ -66,3 +66,4 @@ C:\Users\ronal\OneDrive\Escritorio\Api\bin\Debug\net9.0\SendGrid.dll
 C:\Users\ronal\OneDrive\Escritorio\Api\bin\Debug\net9.0\StarkbankEcdsa.dll
 C:\Users\ronal\OneDrive\Escritorio\Api\bin\Debug\net9.0\DotNetEnv.dll
 C:\Users\ronal\OneDrive\Escritorio\Api\bin\Debug\net9.0\Sprache.dll
+C:\Users\ronal\OneDrive\Escritorio\Api\bin\Debug\net9.0\Twilio.dll
