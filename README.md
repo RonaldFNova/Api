@@ -361,7 +361,116 @@ curl -X POST https://tuapi.com/Api/Insertar-cita \
 - Este endpoint es fundamental para la funcionalidad de agendamiento de citas en el sistema.  
 - No se permite que un paciente tenga más de una cita activa con médicos del mismo tipo de especialidad en fechas futuras.  
 - No se permite que un paciente agende dos citas en el mismo horario aunque sean con diferentes profesionales.
-  
+
+
+#### 12. Obtención de la lista de especialidades médicas (Lista-Especialidades)
+Este endpoint permite obtener la lista completa de especialidades médicas disponibles en el sistema. Es útil para mostrar al paciente las opciones disponibles al momento de agendar una cita.
+
+
+##### Ejemplo usando curl:
+```bash
+
+curl -X GET http://localhost:5179/Api/Lista-Especialidades \
+  -H "Authorization: Bearer <token de sesión>"
+
+```
+
+##### Respuesta exitosa (200 OK):
+```bash
+
+{
+  "mensaje": "Lista de Especialidades enviada correctamente",
+  "listaEspecialidades": [
+    "Alergología",
+    "Anestesiología",
+    "Cardiología"
+  ]
+}
+```
+
+##### Notas:
+- Este endpoint requiere un token válido de sesión, enviado en el encabezado `Authorization` como Bearer <token>.  
+- El token debe ser generado previamente a través del sistema de autenticación.  
+- La lista devuelta puede variar si se agregan o eliminan especialidades en el sistema.  
+- Es útil como paso previo para filtrar médicos por especialidad antes de agendar una cita.  
+
+
+
+#### 13. Mostrar citas disponibles por especialidad y fecha (Mostrar-citas-fecha)
+Este endpoint permite consultar los horarios disponibles para médicos de una especialidad determinada en una fecha específica. Es útil para que el paciente visualice opciones de agenda si aún no ha elegido un médico.
+
+
+##### Ejemplo usando curl:
+```bash
+curl -X POST http://localhost:5179/Api/Mostrar-citas-fecha \
+  -H "Authorization: Bearer <token de sesión>" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "especialidad": "Medicina General",
+        "fecha": "2025-06-12"
+      }'
+
+```
+
+Respuesta exitosa (200 OK):
+```bash
+{
+  "mensaje": "La lista de las fecha se envio correctamente",
+  "lista": [
+    {
+      "id": 142,
+      "nombre": "jose ",
+      "fecha": "2025-06-12",
+      "fechaInicio": "06:00",
+      "fechaFinal": "07:00"
+    }
+  ]
+}
+
+```
+
+##### Notas:
+- Se requiere un token de sesión válido, enviado en el encabezado `Authorization`.  
+- El cuerpo debe incluir:
+- `especialidad`: nombre exacto de la especialidad médica (por ejemplo, "Medicina General").  
+- `fecha`: día en formato `YYYY-MM-DD`.  
+- El sistema devolverá los horarios disponibles de todos los médicos que pertenecen a esa especialidad en la fecha solicitada.  
+- Útil como paso intermedio antes de seleccionar médico y agendar cita.  
+
+
+
+
+#### 14. Inserción de una cita médica por ID de horario (Inserta-cita-Id)
+Este endpoint permite a un paciente agendar una cita médica seleccionando directamente un horario disponible previamente consultado, mediante su ID. Solo es necesario proporcionar el ID del horario y el motivo de la consulta.
+
+##### Ejemplo usando curl:
+```bash
+curl -X POST http://localhost:5179/Api/Inserta-cita-Id \
+  -H "Authorization: Bearer <token de sesión>" \
+  -H "Content-Type: application/json" \
+  -d '{
+        "id": 142,
+        "motivoConsulta": "Tengo cancer ayuda"
+      }'
+```
+
+##### Respuesta exitosa (200 OK):
+```bash
+{
+  "mensaje": "La cita se agendó correctamente"
+}
+```
+
+##### Notas:
+- Requiere autenticación Bearer válida.  
+- El campo `id` corresponde al ID del horario disponible, obtenido previamente a través del endpoint `Mostrar-citas-fecha`.  
+- `motivoConsulta` es un campo obligatorio que debe describir brevemente la razón de la consulta médica.  
+- El sistema validará que:  
+- El horario no haya sido ocupado.  
+- El paciente no tenga otra cita activa en ese mismo horario.  
+- No tenga citas futuras con médicos de la misma especialidad.  
+- Es un método directo y simplificado para agendar una cita sin tener que especificar manualmente fechas y horas.  
+
 
 ### Endpoints principales
 
@@ -376,7 +485,9 @@ curl -X POST https://tuapi.com/Api/Insertar-cita \
 - `POST /Api/Clasificar-medico` - Obtener lista de medicos  
 - `POST /Api/Medico-fecha` - Obtener lista de horarios del medico  
 - `POST /Api/Insertar-cita` - Inserta una cita medica  
-
+- `GET /Api/Lista-Especialidades` - Mostrar las especialidades
+- `POST /Api/Mostrar-citas-fecha` - Mostrar las citas que hay en el dia  
+- `POST /Api/Inserta-cita-Id` - Inserta una cita medica de diferente manera
 
 ## Licencia
 
