@@ -52,6 +52,8 @@ builder.Services.AddScoped<DataClasificarMedico>();
 
 builder.Services.AddScoped<DataMostrarMedicos>();
 
+builder.Services.AddScoped<DataInsertarCitaMedicaId>();
+
 builder.Services.AddScoped<DataTipoUser>();
 
 builder.Services.AddScoped<DataInsertarCitaMedica>();
