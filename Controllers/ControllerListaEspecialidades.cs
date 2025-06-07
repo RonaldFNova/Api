@@ -22,7 +22,7 @@ namespace API.Controllers
         public async Task<IActionResult> GET()
         {
 
-            var ListaEspecialidades = await _dataListaEspecialidades.ObtenerListaEspecialidades();
+            var ListaEspecialidades = await _dataListaEspecialidades.ObtenerListaEspecialidadesAsync();
 
             return Ok(new { mensaje = "Lista de Especialidades enviada correctamente", ListaEspecialidades }); 
         }

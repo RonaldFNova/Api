@@ -58,6 +58,8 @@ builder.Services.AddScoped<DataInsertarCitaMedica>();
 
 builder.Services.AddScoped<DataMedicoFecha>();
 
+builder.Services.AddScoped<DataMostrarCitaFecha>();
+
 builder.Services.AddScoped<DataListaEspecialidades>();
 
 builder.Services.AddScoped<DataEnviarCodigoSms>();

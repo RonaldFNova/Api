@@ -14,7 +14,7 @@ namespace API.Data
         }
 
 
-        public async Task<List<string>> ObtenerListaEspecialidades()
+        public async Task<List<string>> ObtenerListaEspecialidadesAsync()
         {
             var lista = new List<string>();
 
