@@ -475,21 +475,23 @@ curl -X POST http://localhost:5179/Api/Inserta-cita-Id \
 #### 15. Confirmación de token JWT por ID (Confirmar-jwt-id)
 Este endpoint permite validar si un token JWT enviado por el cliente es válido y pertenece a un usuario registrado en el sistema. Su propósito principal es verificar autenticaciones activas y evitar accesos no autorizados.
 
-
 ##### Ejemplo usando curl:
 ```bash
 curl -X POST http://localhost:5179/Api/Confirmar-jwt-id \
   -H "Authorization: Bearer <token de sesión>" \
 ```
 
-Notas:
-Requiere autenticación Bearer válida.
-
+##### Respuesta exitosa (200 OK):
+```bash
+{
+  "mensaje": "El token esta correcto"
+}
+```
+##### Notas:
 - El token debe estar correctamente firmado, pertenecer a un usuario válido y no estar expirado.  
 - El sistema valida que el ID dentro del token JWT corresponde a un usuario existente.  
 - Es útil para verificar la validez de una sesión antes de realizar otras operaciones protegidas.   
 - No requiere cuerpo (body) en la solicitud, solo el encabezado de autorización.  
-
 
 
 ### Endpoints principales
