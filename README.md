@@ -487,11 +487,63 @@ curl -X POST http://localhost:5179/Api/Confirmar-jwt-id \
   "mensaje": "El token esta correcto"
 }
 ```
+
 ##### Notas:
 - El token debe estar correctamente firmado, pertenecer a un usuario válido y no estar expirado.  
 - El sistema valida que el ID dentro del token JWT corresponde a un usuario existente.  
-- Es útil para verificar la validez de una sesión antes de realizar otras operaciones protegidas.   
+- Es útil para verificar la validez de una sesión antes de realizar otras operaciones protegidas.  
 - No requiere cuerpo (body) en la solicitud, solo el encabezado de autorización.  
+
+
+
+#### 16. Verificación del estado de usuario (Estado-user-verificacion)
+Este endpoint permite obtener el estado de verificación de un usuario autenticado. Es útil para determinar si el usuario ha completado los pasos necesarios para verificar su cuenta.
+
+##### Ejemplo usando curl:
+```bash
+
+curl -X GET http://localhost:5179/Api/Estado-user-verificacion \
+  -H "Authorization: Bearer <token de sesión>"
+```
+
+##### Respuesta exitosa (200 OK):
+```bash
+{
+  "mensaje": "El estado del usuario se ha encontrado correctamente",
+  "estadoUser": "No Verificado"
+}
+```
+
+##### Notas:
+- El token JWT enviado en la cabecera `Authorization` debe ser válido y pertenecer a un usuario registrado.  
+- El sistema busca al usuario por el ID contenido en el token y retorna su estado actual de verificación.  
+- El campo `estadoUser` puede tener valores como `"Verificado"`, `"No Verificado"` u otros definidos por la lógica del sistema.  
+
+
+
+#### 17. Obtener nombre completo del usuario (Nombre-Usuario)
+Este endpoint permite obtener el nombre completo del usuario autenticado. Es útil para mostrar información personalizada en interfaces de usuario o para validar datos del perfil.
+
+##### Ejemplo usando curl:
+```bash
+
+curl -X GET http://localhost:5179/Api/Nombre-Usuario \
+  -H "Authorization: Bearer <token de sesión>"
+```
+
+##### Respuesta exitosa (200 OK):
+```bash
+{
+  "mensaje": "El nombre se envio correctamente",
+  "nombreCompleto": "Nombre de usuario"
+}
+```
+
+##### Notas:
+- El token JWT debe ser válido y debe pertenecer a un usuario registrado.  
+- El sistema extrae el ID del usuario desde el token y responde con su nombre completo almacenado en el sistema.  
+- El campo `nombreCompleto` contiene el nombre completo del usuario autenticado.  
+
 
 
 ### Endpoints principales
@@ -511,6 +563,9 @@ curl -X POST http://localhost:5179/Api/Confirmar-jwt-id \
 - `POST /Api/Mostrar-citas-fecha` - Mostrar las citas que hay en el dia  
 - `POST /Api/Inserta-cita-Id` - Inserta una cita medica de diferente manera
 - `POST /Api/Confirmar-jwt-id` - Confirmar si el token de inicio de sesion es valido
+- `GET /Api/Estado-user-verificacion` - Confirmar si el usuario esta verificado
+- `GET /Api/Nombre-Usuario` - Retorna el nombre completo del usuario
+
 
 ## Licencia
 
