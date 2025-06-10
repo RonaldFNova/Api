@@ -25,8 +25,6 @@ namespace API.Controllers
 
             int idPaciente = await _dataInsertarCitaMedicaId.ObtenerIdPacienteAsync(idRegistro);
 
-            Console.WriteLine(idPaciente);
-
             await _dataInsertarCitaMedicaId.InsertarCitaMedicaIdAsync(parametros, idPaciente);
 
             return Ok(new { mensaje = "Cita creada correctamente" });
