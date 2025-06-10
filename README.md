@@ -472,6 +472,28 @@ curl -X POST http://localhost:5179/Api/Inserta-cita-Id \
 - Es un método directo y simplificado para agendar una cita sin tener que especificar manualmente fechas y horas.  
 
 
+#### 15. Confirmación de token JWT por ID (Confirmar-jwt-id)
+Este endpoint permite validar si un token JWT enviado por el cliente es válido y pertenece a un usuario registrado en el sistema. Su propósito principal es verificar autenticaciones activas y evitar accesos no autorizados.
+
+##### Ejemplo usando curl:
+```bash
+curl -X POST http://localhost:5179/Api/Confirmar-jwt-id \
+  -H "Authorization: Bearer <token de sesión>" \
+```
+
+##### Respuesta exitosa (200 OK):
+```bash
+{
+  "mensaje": "El token esta correcto"
+}
+```
+##### Notas:
+- El token debe estar correctamente firmado, pertenecer a un usuario válido y no estar expirado.  
+- El sistema valida que el ID dentro del token JWT corresponde a un usuario existente.  
+- Es útil para verificar la validez de una sesión antes de realizar otras operaciones protegidas.   
+- No requiere cuerpo (body) en la solicitud, solo el encabezado de autorización.  
+
+
 ### Endpoints principales
 
 - `POST /Api/Registro` - Registro de usuarios  
@@ -488,6 +510,7 @@ curl -X POST http://localhost:5179/Api/Inserta-cita-Id \
 - `GET /Api/Lista-Especialidades` - Mostrar las especialidades
 - `POST /Api/Mostrar-citas-fecha` - Mostrar las citas que hay en el dia  
 - `POST /Api/Inserta-cita-Id` - Inserta una cita medica de diferente manera
+- `POST /Api/Confirmar-jwt-id` - Confirmar si el token de inicio de sesion es valido
 
 ## Licencia
 
