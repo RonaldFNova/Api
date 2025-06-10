@@ -477,7 +477,7 @@ Este endpoint permite validar si un token JWT enviado por el cliente es válido 
 
 ##### Ejemplo usando curl:
 ```bash
-curl -X POST http://localhost:5179/Api/Confirmar-jwt-id \
+curl -X GET http://localhost:5179/Api/Confirmar-jwt-id \
   -H "Authorization: Bearer <token de sesión>" \
 ```
 
@@ -492,7 +492,6 @@ curl -X POST http://localhost:5179/Api/Confirmar-jwt-id \
 - El token debe estar correctamente firmado, pertenecer a un usuario válido y no estar expirado.  
 - El sistema valida que el ID dentro del token JWT corresponde a un usuario existente.  
 - Es útil para verificar la validez de una sesión antes de realizar otras operaciones protegidas.  
-- No requiere cuerpo (body) en la solicitud, solo el encabezado de autorización.  
 
 
 
@@ -562,7 +561,7 @@ curl -X GET http://localhost:5179/Api/Nombre-Usuario \
 - `GET /Api/Lista-Especialidades` - Mostrar las especialidades
 - `POST /Api/Mostrar-citas-fecha` - Mostrar las citas que hay en el dia  
 - `POST /Api/Inserta-cita-Id` - Inserta una cita medica de diferente manera
-- `POST /Api/Confirmar-jwt-id` - Confirmar si el token de inicio de sesion es valido
+- `GET /Api/Confirmar-jwt-id` - Confirmar si el token de inicio de sesion es valido
 - `GET /Api/Estado-user-verificacion` - Confirmar si el usuario esta verificado
 - `GET /Api/Nombre-Usuario` - Retorna el nombre completo del usuario
 
