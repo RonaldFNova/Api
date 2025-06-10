@@ -15,9 +15,9 @@ namespace API.Controllers
             _dataNameUser = dataNameUser;
         }
 
-        [HttpPost]
+        [HttpGet]
         [Authorize(Roles = "Paciente,Medico,Administrador")]
-        public async Task<IActionResult> POST()
+        public async Task<IActionResult> GET()
         {
             var userIdClaim = User.FindFirst("id");
             int id = int.Parse(userIdClaim.Value);

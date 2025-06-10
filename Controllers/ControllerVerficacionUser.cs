@@ -2,7 +2,6 @@ using System.Security.Claims;
 using API.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Sprache;
 
 namespace API.Controllers
 {
@@ -18,9 +17,9 @@ namespace API.Controllers
             _dataVerificacionUser = dataVerificacionUser;
         }
 
-        [HttpPost]
+        [HttpGet]
         [Authorize(Roles = "Administrador,Medico,Paciente")]
-        public async Task<IActionResult> POST()
+        public async Task<IActionResult> GET()
         {
             var userIdClaim = User.FindFirst("id");
             int id = int.Parse(userIdClaim.Value);

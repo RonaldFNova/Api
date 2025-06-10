@@ -9,10 +9,10 @@ namespace API.Controllers
     {
 
 
-        [HttpPost]
+        [HttpGet]
         [Authorize(Roles ="Administrador,Medico,Paciente")]
 
-        public Task<ActionResult> POST()
+        public Task<ActionResult> GET()
         {
             return Task.FromResult<ActionResult> (Ok(new { mensaje = "El token esta correcto" }));
         }
