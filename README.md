@@ -544,6 +544,41 @@ curl -X GET http://localhost:5179/Api/Nombre-Usuario \
 - El campo `nombreCompleto` contiene el nombre completo del usuario autenticado.  
 
 
+#### 18. Obtener citas pendientes del paciente (Mostrar-citas-pedientes-paciente)
+Este endpoint permite obtener todas las citas pendientes del paciente autenticado. Es útil para mostrar al usuario un resumen de sus próximas consultas médicas.
+
+##### Ejemplo usando curl:
+```bash
+
+curl -X GET http://localhost:5179/Api/Mostrar-citas-pedientes-paciente \
+  -H "Authorization: Bearer <token de sesión>"
+```
+
+  
+##### Respuesta exitosa (200 OK):
+```bash
+{
+  "mensaje": "lista creada correctamente",
+  "lista": [
+    {
+      "fecha": "2025-06-16",
+      "horaInicio": "06:00",
+      "horaFinal": "07:00",
+      "motivoConsulta": "Tengo dolor de cabeza",
+      "duracion": "01:00:00",
+      "medicoTratante": "Juan ",
+      "estadoCita": "Pendiente"
+    }
+  ]
+}
+```
+
+##### Notas:
+- El token JWT debe ser válido y debe pertenecer a un paciente registrado en el sistema.  
+- El sistema extrae el ID del paciente desde el token para buscar sus citas pendientes.  
+- Si no hay citas pendientes, el campo lista será un arreglo vacío ([]).  
+
+
 
 ### Endpoints principales
 
@@ -564,7 +599,7 @@ curl -X GET http://localhost:5179/Api/Nombre-Usuario \
 - `GET /Api/Confirmar-jwt-id` - Confirmar si el token de inicio de sesion es valido
 - `GET /Api/Estado-user-verificacion` - Confirmar si el usuario esta verificado
 - `GET /Api/Nombre-Usuario` - Retorna el nombre completo del usuario
-
+- `GET Api/Mostrar-citas-pedientes-paciente` - Muestra las citas pedientes que tiene el paciente
 
 ## Licencia
 
