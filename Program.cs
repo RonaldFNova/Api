@@ -7,6 +7,7 @@ using API.Middleware;
 using API.Connection;
 using DotNetEnv;
 using API.Error;
+using API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,6 +73,8 @@ builder.Services.AddScoped<DataListaEspecialidades>();
 
 builder.Services.AddScoped<DataEnviarCodigoSms>();
 
+builder.Services.AddScoped<DataNotificarCitas>();
+
 builder.Services.AddScoped<DataConfirmarCodigoSms>();
 
 builder.Services.AddScoped<DataProfesionalPersonalInform>();
@@ -89,6 +92,10 @@ builder.Services.AddScoped<TokenHelper>();
 builder.Services.AddSingleton<PasswordHasher>();
 
 builder.Services.AddSingleton<ConnectionBD>();
+
+builder.Services.AddHostedService<NotificadorCitasService>();
+
+
 
 builder.Services.AddControllers();
 

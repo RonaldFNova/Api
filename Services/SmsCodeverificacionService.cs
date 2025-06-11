@@ -3,7 +3,7 @@ using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 using Twilio.Types;
 
-namespace API.Security
+namespace API.Services
 {
     public class SmsCodeVerificacionServices
     {

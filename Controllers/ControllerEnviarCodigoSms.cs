@@ -1,9 +1,6 @@
-using System.Security.Claims;
 using API.Data;
-using API.Model;
-using API.Security;
+using API.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers

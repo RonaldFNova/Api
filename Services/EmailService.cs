@@ -3,7 +3,8 @@ using SendGrid.Helpers.Mail;
 using DotNetEnv;
 
 
-namespace API.Security
+
+namespace API.Services
 {
   public class EmailService
   {
@@ -13,9 +14,9 @@ namespace API.Security
       string apiKeyPath = "/etc/secrets/Sendgrid_Api_Key";
 
       if (File.Exists(apiKeyPath)) _apiKey = File.ReadAllText(apiKeyPath).Trim();
-      
+
       else
-      {        
+      {
         Env.Load();
         _apiKey = Environment.GetEnvironmentVariable("Sendgrid_Api_Key") ?? string.Empty;
       }
@@ -137,5 +138,20 @@ namespace API.Security
       var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
       var response = await client.SendEmailAsync(msg);
     }
+
+    public async Task SendEmail24HAsync(string para, string asunto, string htmlContenido)
+    {
+        var client = new SendGridClient(_apiKey);
+        var from = new EmailAddress("rdevia1@udi.edu.co", "MediConnet");
+        var to = new EmailAddress(para);
+        
+        string textoPlano = "Tienes una cita médica mañana. Revisa tu correo para más detalles."; // Alternativa de texto plano
+
+        var msg = MailHelper.CreateSingleEmail(from, to, asunto, textoPlano, htmlContenido);
+        await client.SendEmailAsync(msg);
+    }
+
   }
-}
+
+
+} 

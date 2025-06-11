@@ -1,10 +1,9 @@
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Text;
 
-namespace API.Security
+namespace API.Services
 {
     public class JwtService
     {

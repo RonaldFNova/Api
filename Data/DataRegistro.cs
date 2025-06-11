@@ -3,8 +3,8 @@ using API.Model;
 using MySql.Data.MySqlClient;
 using System.Data;
 using API.Security;
+using API.Services;
 using API.Error;
-using System.Data.SqlClient;
 
 namespace API.Data 
 {
