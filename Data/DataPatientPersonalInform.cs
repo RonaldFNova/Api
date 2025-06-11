@@ -52,6 +52,7 @@ namespace API.Data
                     }
                 }
 
+
                 if (parametros.AlergiasGeneral.Count != 0 && parametros.AlergiasGeneral != null)
                 {
                     foreach (var alergia in parametros.AlergiasGeneral)
